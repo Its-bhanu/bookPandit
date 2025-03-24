@@ -30,7 +30,7 @@ const PoojaBooks = () => {
 
     // try{
 
-    //   const response=await axios.post("https://book-pandit-mmed.vercel.app//api/booking/poojaBooks", formData)
+    //   const response=await axios.post("https://book-pandit-mmed.vercel.app/api/booking/poojaBooks", formData)
     //   console.log("response data", response.data);
     //         localStorage.setItem("BookingToken", response.data.token);
     //         toast.success("please wait we find a best pandit in your region");

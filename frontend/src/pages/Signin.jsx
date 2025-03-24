@@ -29,7 +29,7 @@ const Signin = () => {
     setError("");
 
     try {
-      const response = await axios.post("https://book-pandit-mmed.vercel.app//api/pandits/login", formData);
+      const response = await axios.post("https://book-pandit-mmed.vercel.app/api/pandits/login", formData);
       console.log("response data", response.data);
       localStorage.setItem("panditsignintoken", response.data.token);
       toast.success("Sign-in successful!")
