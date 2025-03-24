@@ -23,7 +23,7 @@ const PanditProfilesList = () => {
   useEffect(() => {
     const fetchPandits = async () => {
       try {
-        const response = await axios.get("http://localhost:4000/api/pandits/AllProfiles");
+        const response = await axios.get("https://book-pandit-mmed.vercel.app//api/pandits/AllProfiles");
         setPandits(response.data);
         console.log(response.data);
         toast.success("Pandit profiles loaded successfully!");
@@ -41,7 +41,7 @@ const PanditProfilesList = () => {
   const handleBooking = async (panditId) => {
     try {
       console.log('Sending payload:', { formData, panditId }); // Debugging
-      const bookingResponse = await axios.post("http://localhost:4000/api/booking/poojaBooks", { formData, panditId });
+      const bookingResponse = await axios.post("https://book-pandit-mmed.vercel.app//api/booking/poojaBooks", { formData, panditId });
       const bookingId = bookingResponse.data.booking._id;
       toast.success("Pooja booking created successfully!");
       handlepayment(bookingId);
@@ -54,7 +54,7 @@ const PanditProfilesList = () => {
   const handlepayment = async (bookingId) => {
     try {
       console.log( "Booking Id: ",bookingId)
-      const paymentResponse = await axios.post("http://localhost:4000/api/payment/createOrder", { bookingId  });
+      const paymentResponse = await axios.post("https://book-pandit-mmed.vercel.app//api/payment/createOrder", { bookingId  });
       navigate("/feedback");
       const { id, amount, currency } = paymentResponse.data;
 
@@ -69,7 +69,7 @@ const PanditProfilesList = () => {
           try {
             console.log("Razorpay Response:", response);
 
-            const verifyResponse = await axios.post("http://localhost:4000/api/payment/verifyPayment", {
+            const verifyResponse = await axios.post("https://book-pandit-mmed.vercel.app//api/payment/verifyPayment", {
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_order_id: response.razorpay_order_id,
               razorpay_signature: response.razorpay_signature,

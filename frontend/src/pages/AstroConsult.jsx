@@ -15,7 +15,7 @@ const AstrologyConsultPage = () => {
   useEffect(() => {
     const fetchAstrologers = async () => {
       try {
-        const response = await axios.get("http://localhost:4000/api/pandits/AllProfiles");
+        const response = await axios.get("https://book-pandit-mmed.vercel.app//api/pandits/AllProfiles");
         setAstrologers(response.data);
       } catch (error) {
         console.error("Error fetching astrologers", error);
@@ -31,7 +31,7 @@ const AstrologyConsultPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:4000/api/consult/book", formData);
+      await axios.post("https://book-pandit-mmed.vercel.app//api/consult/book", formData);
       setMessage("Consultation booked successfully!");
       setFormData({ name: "", email: "", dateOfBirth: "", query: "" });
     } catch (error) {

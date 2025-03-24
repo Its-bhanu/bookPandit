@@ -12,7 +12,7 @@ const PanditHomePage = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get(`http://localhost:4000/api/pandits/user/token?token=${token}`);
+        const response = await axios.get(`https://book-pandit-mmed.vercel.app//api/pandits/user/token?token=${token}`);
         // console.log("data", response.data.data[0]);
         setUsers(response.data.data);
       } catch (error) {
@@ -28,7 +28,7 @@ const PanditHomePage = () => {
   }, [users])
   const handleDeleteBooking = async (bookingid) => {
   try{
-    const response=await axios.delete(`http://localhost:4000/api/pandits/poojaBooks/${bookingid}`);
+    const response=await axios.delete(`https://book-pandit-mmed.vercel.app//api/pandits/poojaBooks/${bookingid}`);
     setUsers(users.filter((user)=>user._id!==bookingid));
     alert("Booking deleted successfully");
 
@@ -42,7 +42,7 @@ const PanditHomePage = () => {
   //   try {
   //     const token=localStorage.getItem('panditsignintoken');
 
-  //     const response=await axios.post(`http://localhost:4000/api/pandits/poojaBooks/accept/${bookingid}`,
+  //     const response=await axios.post(`https://book-pandit-mmed.vercel.app//api/pandits/poojaBooks/accept/${bookingid}`,
   //       {
   //         headers: {
   //           Authorization: `Bearer ${token}`, 
@@ -58,7 +58,7 @@ const PanditHomePage = () => {
 
   // const handleDeclineBooking = async (bookingid) => {
   //   try {
-  //     await axios.post(`http://localhost:4000/api/pandits/poojaBooks/decline/${bookingid}`);
+  //     await axios.post(`https://book-pandit-mmed.vercel.app//api/pandits/poojaBooks/decline/${bookingid}`);
   //     setUsers(users.filter((user) => user._id !== bookingid));
   //     alert("Booking declined successfully");
   //   } catch (error) {

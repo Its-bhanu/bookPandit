@@ -37,7 +37,7 @@ const UserSignUp = () => {
 
         try {
             console.log("Submitting Form Data:", formData);
-            const response = await axios.post("http://localhost:4000/api/users/register", formData, {
+            const response = await axios.post("https://book-pandit-mmed.vercel.app//api/users/register", formData, {
                 headers: { "Content-Type": "application/json" }
             });
 
@@ -63,7 +63,7 @@ const UserSignUp = () => {
 
         try {
             console.log("Submitting OTP:", otp);
-            const response = await axios.post("http://localhost:4000/api/users/verify-otp", { 
+            const response = await axios.post("https://book-pandit-mmed.vercel.app//api/users/verify-otp", { 
                 email: formData.email, 
                 otp 
             });

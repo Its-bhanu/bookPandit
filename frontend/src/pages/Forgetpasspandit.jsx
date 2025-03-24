@@ -14,7 +14,7 @@ const ForgetPassword = () => {
   const handleEmailSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:4000/api/pandit/forget-password", { email });
+      const response = await axios.post("https://book-pandit-mmed.vercel.app//api/pandit/forget-password", { email });
       setMessage(response.data.message);
       setStep(2); // Move to OTP step
     } catch (error) {
@@ -38,7 +38,7 @@ const ForgetPassword = () => {
   const handleResetPassword = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:4000/api/pandit/reset-password", {
+      const response = await axios.post("https://book-pandit-mmed.vercel.app//api/pandit/reset-password", {
         email,
         otp,
         newPassword,
