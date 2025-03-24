@@ -32,6 +32,6 @@ router.get('/logout',panditController.logoutPandit,authMiddleware.authpandit);
 router.get('/AllProfiles',panditController.getAllPandits);
 router.get("/user/token",panditController.getBookingByUser)
 router.delete('/poojaBooks/:id',panditController.deleteBooking);
-router.post('/poojaBooks/accept/:bookingid',panditController.acceptBooking,authMiddleware.authpandit);
-router.put('/decline/:id',panditController.declineBooking);
+// router.post('/poojaBooks/accept/:bookingid',panditController.acceptBooking,authMiddleware.authpandit);
+// router.put('/decline/:id',panditController.declineBooking);
 module.exports = router;

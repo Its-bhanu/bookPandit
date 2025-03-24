@@ -3,16 +3,17 @@ const mongoose = require('mongoose');
 const paymentSchema = new mongoose.Schema({
     paymentId: {
         type: String,
-        // required: true
+        //  required: true
     },
     orderId: {
         type: String,
-        // required: true
+        required: true
     },
    
     status: {
         type: String,
         required: true,
+        enum: ["pending", "paid", "failed"],
         default: 'pending',
     },
     currency: {

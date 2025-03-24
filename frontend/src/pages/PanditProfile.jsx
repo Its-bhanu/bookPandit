@@ -14,10 +14,18 @@ const PanditProfilesList = () => {
   const formData = location.state?.formData || {};
 
   useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.async = true;
+    document.body.appendChild(script);
+}, []);
+
+  useEffect(() => {
     const fetchPandits = async () => {
       try {
         const response = await axios.get("http://localhost:4000/api/pandits/AllProfiles");
         setPandits(response.data);
+        console.log(response.data);
         toast.success("Pandit profiles loaded successfully!");
       } catch (error) {
         setError("Failed to fetch pandit profiles");
@@ -34,7 +42,7 @@ const PanditProfilesList = () => {
     try {
       console.log('Sending payload:', { formData, panditId }); // Debugging
       const bookingResponse = await axios.post("http://localhost:4000/api/booking/poojaBooks", { formData, panditId });
-      const bookingId = bookingResponse.data.bookingId;
+      const bookingId = bookingResponse.data.booking._id;
       toast.success("Pooja booking created successfully!");
       handlepayment(bookingId);
     } catch (error) {
@@ -45,7 +53,9 @@ const PanditProfilesList = () => {
 
   const handlepayment = async (bookingId) => {
     try {
-      const paymentResponse = await axios.post("http://localhost:4000/api/payment/createOrder", { amount: 50, bookingId });
+      console.log( "Booking Id: ",bookingId)
+      const paymentResponse = await axios.post("http://localhost:4000/api/payment/createOrder", { bookingId  });
+      navigate("/feedback");
       const { id, amount, currency } = paymentResponse.data;
 
       const options = {
@@ -57,11 +67,24 @@ const PanditProfilesList = () => {
         order_id: id,
         handler: async function (response) {
           try {
-            await axios.post("http://localhost:4000/api/payment/verifyPayment", { response, bookingId });
-            toast.success("Payment successful! Pandit booked.");
-            navigate("/feedback");
+            console.log("Razorpay Response:", response);
+
+            const verifyResponse = await axios.post("http://localhost:4000/api/payment/verifyPayment", {
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_signature: response.razorpay_signature,
+              bookingId,
+            });
+
+            if (verifyResponse.data.success) {
+              toast.success("Payment verified! Pandit successfully booked.");
+              // navigate("/feedback");
+            } else {
+              throw new Error("Payment verification failed.");
+            }
           } catch (error) {
-            toast.error("Payment verification failed");
+            console.error("Payment verification error:", error);
+            toast.error(error.response?.data?.message || "Payment verification failed.");
           }
         },
         prefill: {
@@ -73,6 +96,7 @@ const PanditProfilesList = () => {
           color: "#3399cc",
         },
       };
+      
       const rzp1 = new window.Razorpay(options);
       rzp1.open();
     } catch (error) {
@@ -103,7 +127,7 @@ const PanditProfilesList = () => {
               <p className="text-gray-600 mb-3"><strong>Expertise:</strong> {pandit.expertise}</p>
               <button 
                 className="mt-3 px-6 py-2 bg-green-600 text-white text-lg rounded-lg hover:bg-green-700 transition duration-300 shadow-md"
-                onClick={() => handleBooking(pandit._id)}
+                onClick={() => {handleBooking(pandit._id)}}
               >
                 Pay & Book Now
               </button>

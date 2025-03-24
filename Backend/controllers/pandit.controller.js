@@ -194,7 +194,7 @@ module.exports.getAllPandits = async (req, res) => {
     try {
         console.log("Fetching all pandits..."); 
         const pandits = await PanditModel.find();
-        console.log("Retrieved Pandits:", pandits); 
+        // console.log("Retrieved Pandits:", pandits); 
         res.status(200).json(pandits);
     } catch (error) {
         console.error("Error retrieving Pandit profiles:", error.message); // Log the actual error
@@ -203,9 +203,10 @@ module.exports.getAllPandits = async (req, res) => {
 };
 module.exports.getBookingByUser=async(req,res)=>{
     try{
-        console.log("eadf");
+        console.log("fetching user bookings:");
         const { token } = req.query;
         const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+        console.log("djks")
         console.log(decodedToken);
         const userId = decodedToken._id;
         

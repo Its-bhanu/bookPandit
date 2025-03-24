@@ -13,16 +13,19 @@ const PanditHomePage = () => {
     const fetchUsers = async () => {
       try {
         const response = await axios.get(`http://localhost:4000/api/pandits/user/token?token=${token}`);
-        console.log(response.data.data)
+        // console.log("data", response.data.data[0]);
         setUsers(response.data.data);
       } catch (error) {
         console.error("Error fetching pandit profiles", error);
       }
     };
 
-    fetchUsers(); // Call the function inside useEffect
-  }, []); // Dependency array to prevent infinite API calls
+    fetchUsers(); 
+  }, [token]); 
+  useEffect(() => {
 
+    console.log("users", users);
+  }, [users])
   const handleDeleteBooking = async (bookingid) => {
   try{
     const response=await axios.delete(`http://localhost:4000/api/pandits/poojaBooks/${bookingid}`);
@@ -35,34 +38,34 @@ const PanditHomePage = () => {
     alert("Failed to delete booking.");
   }
   };
-  const handleAcceptBooking = async (bookingid) => {
-    try {
-      const token=localStorage.getItem('panditsignintoken');
+  // const handleAcceptBooking = async (bookingid) => {
+  //   try {
+  //     const token=localStorage.getItem('panditsignintoken');
 
-      const response=await axios.post(`http://localhost:4000/api/pandits/poojaBooks/accept/${bookingid}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`, 
-          },
-        }
-      );
-      alert("Booking accepted successfully");
-    } catch (error) {
-      console.error("Error accepting booking", error);
-      alert("Failed to accept booking.");
-    }
-  };
+  //     const response=await axios.post(`http://localhost:4000/api/pandits/poojaBooks/accept/${bookingid}`,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`, 
+  //         },
+  //       }
+  //     );
+  //     alert("Booking accepted successfully");
+  //   } catch (error) {
+  //     console.error("Error accepting booking", error);
+  //     alert("Failed to accept booking.");
+  //   }
+  // };
 
-  const handleDeclineBooking = async (bookingid) => {
-    try {
-      await axios.post(`http://localhost:4000/api/pandits/poojaBooks/decline/${bookingid}`);
-      setUsers(users.filter((user) => user._id !== bookingid));
-      alert("Booking declined successfully");
-    } catch (error) {
-      console.error("Error declining booking", error);
-      alert("Failed to decline booking.");
-    }
-  };
+  // const handleDeclineBooking = async (bookingid) => {
+  //   try {
+  //     await axios.post(`http://localhost:4000/api/pandits/poojaBooks/decline/${bookingid}`);
+  //     setUsers(users.filter((user) => user._id !== bookingid));
+  //     alert("Booking declined successfully");
+  //   } catch (error) {
+  //     console.error("Error declining booking", error);
+  //     alert("Failed to decline booking.");
+  //   }
+  // };
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Header */}
@@ -95,14 +98,13 @@ const PanditHomePage = () => {
         </p>
       </motion.section>
 
-      {/* Upcoming Bookings */}
       <section className="py-12 px-8">
         <h3 className="text-3xl font-bold text-gray-800 text-center mb-6">📅 Upcoming Bookings</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {users.length > 0 ? (
             users.map((user, index) => (
               <motion.div
-                key={user._id || index} // Use unique id if available
+                key={user._id || index} 
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, delay: index * 0.2 }}
@@ -124,8 +126,8 @@ const PanditHomePage = () => {
                 >
                   Delete Booking
                 </button>
-                <button className="mt-4 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600" onClick={() => handleAcceptBooking(user._id)}>Accept</button>
-                <button className="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 ml-2" onClick={() => handleDeclineBooking(user._id)}>Decline</button>
+                {/* <button className="mt-4 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600" onClick={() => handleAcceptBooking(user._id)}>Accept</button>
+                <button className="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 ml-2" onClick={() => handleDeclineBooking(user._id)}>Decline</button> */}
                
               </motion.div>
             ))
@@ -135,7 +137,7 @@ const PanditHomePage = () => {
         </div>
       </section>
 
-      {/* Services Offered */}
+     
       <section className="py-12 px-8 bg-white">
         <h3 className="text-3xl font-bold text-gray-800 text-center mb-6">🛕 Services Offered</h3>
         <div className="flex flex-wrap justify-center gap-8">
@@ -156,7 +158,7 @@ const PanditHomePage = () => {
         </div>
       </section>
 
-      {/* Testimonial Slider */}
+      
       <section className="py-16 px-8 bg-gray-200">
         <h3 className="text-3xl font-bold text-gray-800 text-center mb-6">💬 Testimonials</h3>
         <Swiper
@@ -172,10 +174,10 @@ const PanditHomePage = () => {
           className="w-full"
         >
           {[
-            { name: "Aarti S.", review: "Pandit Ji made our housewarming ceremony unforgettable!" },
-            { name: "Rohit M.", review: "Highly professional and punctual. Highly recommended!" },
-            { name: "Neha G.", review: "The best experience with Pandit Ji for my wedding!" },
-            { name: "Rahul P.", review: "On-time service with excellent rituals performed!" },
+            { name: "Harsit", review: "Pandit Ji made our housewarming ceremony unforgettable!" },
+            { name: "Harshal", review: "Highly professional and punctual. Highly recommended!" },
+            { name: "Somin.", review: "The best experience with Pandit Ji for my wedding!" },
+            { name: "Nikhil.", review: "On-time service with excellent rituals performed!" },
           ].map((testimonial, index) => (
             <SwiperSlide key={index}>
               <motion.div
@@ -192,7 +194,7 @@ const PanditHomePage = () => {
         </Swiper>
       </section>
 
-      {/* Contact Section */}
+     
       <section className="py-12 px-8 text-center">
         <h3 className="text-3xl font-bold text-gray-800 mb-4">📞 Contact Us</h3>
         <p className="text-gray-600">
@@ -211,3 +213,4 @@ const PanditHomePage = () => {
 };
 
 export default PanditHomePage;
+

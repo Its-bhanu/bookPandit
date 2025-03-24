@@ -10,7 +10,7 @@ const poojaBookSchema = new mongoose.Schema({
     phoneNo: {
         type: Number,
         required: true,
-        unique: true
+        unique: false,
     },
     poojaType: {
         type: String,
