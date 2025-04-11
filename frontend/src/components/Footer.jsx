@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { FaFacebook, FaInstagram, FaGithub, FaWhatsapp } from "react-icons/fa";
+import { FaFacebook, FaInstagram, FaGithub, FaLinkedin } from "react-icons/fa";
 
 const Footer = () => {
   return (
@@ -26,17 +26,13 @@ const Footer = () => {
 
        
         <div className="flex space-x-4 mt-4 md:mt-0">
-          <a href="#" className="text-gray-300 hover:text-blue-400 text-xl">
-            <FaFacebook />
-          </a>
-          <a href="#" className="text-gray-300 hover:text-pink-500 text-xl">
-            <FaInstagram />
-          </a>
-          <a href="#" className="text-gray-300 hover:text-gray-400 text-xl">
+          
+          
+          <a href="https://github.com/Its-bhanu/" className="text-gray-300 hover:text-gray-400 text-xl">
             <FaGithub />
           </a>
-          <a href="#" className="text-gray-300 hover:text-green-400 text-xl">
-            <FaWhatsapp />
+          <a href="https://www.linkedin.com/in/bhanu-sharma-9b9139261/" className="text-gray-300 hover:text-green-400 text-xl">
+          <FaLinkedin />
           </a>
         </div>
       </div>

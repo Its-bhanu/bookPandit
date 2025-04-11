@@ -25,12 +25,12 @@ const Testimonials = () => {
         className="max-w-6xl mx-auto"
       >
         {[
-          { text: "Great experience! The Pandit arrived on time and performed the puja very well.", author: "🙏 Ramesh K." },
+          { text: "Great experience! The Pandit arrived on time and performed the puja very well.", author: "🙏 Harshit." },
           { text: "A seamless platform for Pandits to connect with devotees.", author: "🕉️ Pandit Sharma" },
-          { text: "I booked a Pandit for Griha Pravesh, and the whole process was so smooth!", author: "🏡 Anjali M." },
-          { text: "Highly professional service! The rituals were performed with great devotion.", author: "📿 Vikram S." },
-          { text: "The Pandit was well-versed in all the Vedic rituals and explained everything clearly.", author: "📖 Sneha R." },
-          { text: "I would definitely recommend this service to everyone looking for a reliable Pandit!", author: "✨ Rajesh T." },
+          { text: "I booked a Pandit for Griha Pravesh, and the whole process was so smooth!", author: "🏡 Nikhil." },
+          { text: "Highly professional service! The rituals were performed with great devotion.", author: "📿 Somin." },
+          { text: "The Pandit was well-versed in all the Vedic rituals and explained everything clearly.", author: "📖 Harshal." },
+          { text: "I would definitely recommend this service to everyone looking for a reliable Pandit!", author: "✨ Kartik." },
         ].map((testimonial, index) => (
           <SwiperSlide key={index}>
             <div className="bg-white p-6 shadow-2xl rounded-2xl transition-all transform hover:scale-105 text-center 
