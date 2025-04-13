@@ -15,19 +15,57 @@ const PoojaBooks = () => {
     message: "",
   });
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
+//   const handleChange = (e) => {
+//     const { name, value } = e.target;
+//     setFormData({
+//       ...formData,
+//       [name]: value,
+//     });
+//   };
 
   const [Error,setError]=useState("");
   const navigate=useNavigate();
+  const getTodayDate = () => {
+    const today = new Date();
+    return today.toISOString().split("T")[0];
+  };
+
+  // Get current time in HH:mm format
+  const getCurrentTime = () => {
+    const now = new Date();
+    const hours = String(now.getHours()).padStart(2, "0");
+    const minutes = String(now.getMinutes()).padStart(2, "0");
+    return `${hours}:${minutes}`;
+  };
+
+  const [minDate, setMinDate] = useState(getTodayDate());
+  const [minTime, setMinTime] = useState(getCurrentTime());
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    // Update time validation if date is changed
+    if (name === "date" && value === getTodayDate()) {
+      setMinTime(getCurrentTime());
+    } else if (name === "date") {
+      setMinTime("00:00");
+    }
+  };
   const handleSubmit = async(e) => {
     e.preventDefault();
 
+    const selectedDate = new Date(formData.date + "T" + formData.time);
+    const now = new Date();
+
+    if (selectedDate < now) {
+      toast.error("Please select a future date and time.");
+      return;
+    }
     // try{
 
     //   const response=await axios.post("https://book-pandit-mmed.vercel.app/api/booking/poojaBooks", formData)
@@ -84,6 +122,7 @@ return (
                 <input
                     type="date"
                     name="date"
+                    min={minDate}
                     value={formData.date}
                     onChange={handleChange}
                     required
@@ -92,6 +131,7 @@ return (
                 <input
                     type="time"
                     name="time"
+                    min={formData.date===minDate ? minTime : undefined}
                     value={formData.time}
                     onChange={handleChange}
                     required

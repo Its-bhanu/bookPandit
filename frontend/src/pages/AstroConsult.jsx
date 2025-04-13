@@ -16,7 +16,9 @@ const AstrologyConsultPage = () => {
     const fetchAstrologers = async () => {
       try {
         const response = await axios.get("https://book-pandit-mmed.vercel.app/api/pandits/AllProfiles");
-        setAstrologers(response.data);
+        const onlyAstrologers = response.data.filter((astro) => astro.expertise === "Astrology"|| "astrology");
+        setAstrologers(onlyAstrologers);
+        // setAstrologers(response.data);
       } catch (error) {
         console.error("Error fetching astrologers", error);
       }
