@@ -17,6 +17,7 @@ import ThankYouPage from "./pages/Thanks"
 import AboutUs from "./pages/Aboutus";
 import Forgetpasspandit from './pages/Forgetpasspandit';
 import AstroConsult from './pages/AstroConsult';
+import PanditChat from './pages/ChatPage';
 function App() {
   return (
     <BrowserRouter>
@@ -37,6 +38,7 @@ function App() {
         <Route path='/pandit/forgetpassword' element={<Forgetpasspandit/>}/>
         <Route path='/aboutus' element={<AboutUs/>}/>
         <Route path='/AstroConsult' element={<AstroConsult/>}/>
+        <Route path="/panditChat" element={<PanditChat />} />
        </Routes>
    
       </div>

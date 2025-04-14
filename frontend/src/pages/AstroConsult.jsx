@@ -1,85 +1,179 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import axios from "axios";
-
-const AstrologyConsultPage = () => {
-//   const [formData, setFormData] = useState({
-//     name: "",
-//     email: "",
-//     dateOfBirth: "",
-//     query: ""
-//   });
+import { useNavigate } from "react-router-dom";
+import { FaBars, FaTimes } from "react-icons/fa";
+import PanditChat from "./ChatPage";
+const AstroConsult = () => {
   const [message, setMessage] = useState("");
   const [astrologers, setAstrologers] = useState([]);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchAstrologers = async () => {
       try {
+        setIsLoading(true);
         const response = await axios.get("https://book-pandit-mmed.vercel.app/api/pandits/AllProfiles");
-        const onlyAstrologers = response.data.filter((astro) => astro.expertise === "Astrology"|| "astrology");
+        
+       
+        console.log("API Response:", response);
+        console.log("Response Data:", response.data);
+        
+        
+        const onlyAstrologers = response.data.filter((astro) => {
+          
+          if (!astro || !astro.expertise) return false;
+          
+          
+          const expertise = astro.expertise.toString().toLowerCase();
+          return expertise.includes("astrology");
+        });
+        
+        console.log("Filtered Astrologers:", onlyAstrologers);
         setAstrologers(onlyAstrologers);
-        // setAstrologers(response.data);
       } catch (error) {
         console.error("Error fetching astrologers", error);
+        setMessage("Failed to load astrologers. Please try again later.");
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchAstrologers();
   }, []);
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleChatWithPandit = (panditId) => {
+    // navigate(`/panditChat/${panditId}`);
+    navigate("/panditChat", {
+      state: {
+        panditId: panditId,
+      },
+    });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await axios.post("https://book-pandit-mmed.vercel.app/api/consult/book", formData);
-      setMessage("Consultation booked successfully!");
-      setFormData({ name: "", email: "", dateOfBirth: "", query: "" });
-    } catch (error) {
-      setMessage("Failed to book consultation. Try again later.");
-    }
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
   };
+
+  // Loader Component
+  const Loader = () => (
+    <div className="flex justify-center items-center py-20">
+      <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div>
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <header className="bg-blue-700 text-white py-5 px-6 flex justify-between items-center shadow-lg">
+      {/* Header with Mobile Menu */}
+      <header className="bg-blue-700 text-white py-5 px-6 flex justify-between items-center shadow-lg relative">
         <h1 className="text-3xl font-extrabold">Astrology Consultation</h1>
-        <nav className="flex gap-6 text-lg">
+        
+        {/* Desktop Navigation */}
+        <nav className="hidden md:flex gap-6 text-lg">
           <a href="/" className="hover:text-gray-300">Home</a>
           <a href="/services" className="hover:text-gray-300">Services</a>
-          <a href="/contact" className="hover:text-gray-300">Contact</a>
+          <a href="/contactUs" className="hover:text-gray-300">Contact</a>
         </nav>
+        
+        {/* Mobile Menu Button */}
+        <button 
+          className="md:hidden text-2xl focus:outline-none"
+          onClick={toggleMenu}
+        >
+          {isMenuOpen ? <FaTimes /> : <FaBars />}
+        </button>
+        
+        {/* Mobile Menu Dropdown */}
+        {isMenuOpen && (
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="absolute top-full left-0 right-0 bg-blue-800 md:hidden z-10 shadow-lg"
+          >
+            <div className="flex flex-col p-4 space-y-4">
+              <a 
+                href="/" 
+                className="hover:text-gray-300 border-b border-blue-700 pb-2"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Home
+              </a>
+              <a 
+                href="/services" 
+                className="hover:text-gray-300 border-b border-blue-700 pb-2"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Services
+              </a>
+              <a 
+                href="/contactUs" 
+                className="hover:text-gray-300"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Contact
+              </a>
+            </div>
+          </motion.div>
+        )}
       </header>
 
-      
-      <section className="py-12 px-8">
+      <section className="py-12 px-4 md:px-8">
         <h3 className="text-3xl font-bold text-gray-800 text-center mb-6">🔮 Meet Our Expert Astrologers</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {astrologers.map((astro,index) => (
-            
-            <motion.div key={astro.id || index} className="bg-white shadow-xl rounded-lg p-6 transform hover:scale-105 transition duration-300">
-                <img
-              src="https://www.creativehatti.com/wp-content/uploads/edd/2022/11/Indian-pandit-is-sitting-with-greet-hand-2-large.jpg "
-              alt="Pandit"
-              className="w-22 h-22 object-cover rounded-full border-4 border-gray-200 mb-4 mx-auto"
-            />
-              <h4 className="text-lg font-semibold text-gray-800">{astro.fullname}</h4>
-                <p className="text-gray-600">Age: {astro.age}</p>
-              <p className="text-gray-600">Expertise: {astro.expertise}</p>
-              <p className="text-gray-600">Experience: {astro.experience}</p>
-              <p className="text-gray-600">Contact: {astro.mobile}</p>
-                <p className="text-gray-600">An experienced and knowledgeable astrologer in "{astro.expertise}" ready to guide you in your spiritual journey</p>
-              <button className="mt-4 w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600" onClick={() => alert(`Chat with ${astro.fullname} coming soon!`)}>Chat with Pandit</button>
-            </motion.div>
-          ))}
-        </div>
+        
+        {isLoading ? (
+          <Loader />
+        ) : message ? (
+          <div className="text-center text-red-500 py-10">{message}</div>
+        ) : astrologers.length === 0 ? (
+          <div className="text-center text-gray-500 py-10">
+            No astrologers available at the moment. Please check back later.
+           
+            {astrologers && <div className="mt-4 text-xs">Debug: {JSON.stringify(astrologers)}</div>}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            {astrologers.map((astro, index) => {
+              // Log each astrologer's data
+              console.log(`Astrologer ${index}:`, astro);
+              
+              return (
+                <motion.div 
+                  key={astro._id || astro.id || index} 
+                  className="bg-white shadow-xl rounded-lg p-6 transform hover:scale-105 transition duration-300"
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <img
+                    src={astro.image || astro.profileImage || "https://www.creativehatti.com/wp-content/uploads/edd/2022/11/Indian-pandit-is-sitting-with-greet-hand-2-large.jpg"}
+                    alt="Pandit"
+                    className="w-22 h-22 object-cover rounded-full border-4 border-gray-200 mb-4 mx-auto"
+                  />
+                  <h4 className="text-lg font-semibold text-gray-800">
+                    {astro.fullname || astro.name || astro.username || "Pandit"}
+                  </h4>
+                  <p className="text-gray-600">Age: {astro.age || "Not specified"}</p>
+                  <p className="text-gray-600">Expertise: {astro.expertise || "Astrology"}</p>
+                  <p className="text-gray-600">Experience: {astro.experience || "Not specified"}</p>
+                  <p className="text-gray-600">Contact: {astro.mobile || astro.phone || "Not provided"}</p>
+                  <p className="text-gray-600">
+                    An experienced and knowledgeable astrologer in "{astro.expertise || "Astrology"}" ready to guide you
+                  </p>
+                  <button 
+                    className="mt-4 w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition-colors"
+                    onClick={() => handleChatWithPandit(astro._id || astro.id || index)}
+                  >
+                    Chat with Pandit
+                  </button>
+                </motion.div>
+              );
+            })}
+          </div>
+        )}
       </section>
-
-     
-      
     </div>
   );
 };
 
-export default AstrologyConsultPage;
+export default AstroConsult;
