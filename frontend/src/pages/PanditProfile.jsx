@@ -47,6 +47,7 @@ const PanditProfilesList = () => {
       const bookingResponse = await axios.post("https://book-pandit-mmed.vercel.app/api/booking/poojaBooks", { formData, panditId });
       const bookingId = bookingResponse.data.booking._id;
       toast.success("Pooja booking created successfully!");
+      console.log("Booking ID:", bookingId);
       handlePayment(bookingId);
     } catch (error) {
       console.error('Error during booking:', error.response ? error.response.data : error.message);
@@ -101,8 +102,8 @@ const PanditProfilesList = () => {
         },
         prefill: {
           name: formData.name,
-          email: formData.email || "customer@example.com",
-          contact: formData.phoneNo || "9999999999",
+          email: formData.email || "",
+          contact: formData.phoneNo || "8854072557",
         },
         theme: {
           color: "#3399cc",

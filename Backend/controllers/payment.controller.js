@@ -4,7 +4,7 @@ const crypto=require('crypto');
 module.exports.createOrder = async (req, res) => {
   try {
       const {  bookingId } = req.body;
-      const amount = 5000;
+      const amount = 2100 * 100; // Amount in paise (Razorpay expects amount in paise)`;
 
       // Debugging logs
      

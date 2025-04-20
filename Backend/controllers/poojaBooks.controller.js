@@ -4,71 +4,28 @@ const User = require("../models/user.model");
 
 module.exports.createBooking = async (req, res) => {
     try {
-        console.log("Request Body:", req.body);
-        
-        // Destructure the request body
-        const { formData, panditId, userId } = req.body;
-        const { name, phoneNo, poojaType, date, time, address } = formData || {};
-
-        // Validate required fields
-        if (!name || !phoneNo || !poojaType || !date || !time || !address || !panditId || !userId) {
-            return res.status(400).json({ message: "All fields are required" });
-        }
-
-        // Check for existing booking with the same phone number AND date
-        const existingBooking = await PoojaBook.findOne({ 
-            phoneNo,
-            date,
-            status: { $ne: "cancelled" } // Exclude cancelled bookings
-        });
-
+        console.log("AHDF", req.body)
+        let {name, phoneNo, poojaType, date, time, address} = req.body.formData;
+        const {panditId} = req.body;
+        const {userId} = req.body; 
+        const existingBooking = await PoojaBook.findOne({ phoneNo, date });
         if (existingBooking) {
-            return res.status(400).json({ 
-                message: "You already have a booking with this phone number for the selected date",
-                existingBooking
-            });
+            return res.status(400).json({ message: "Booking with this phone number already exists for this date" });
         }
+        const newBooking = new PoojaBook({name, phoneNo, poojaType, date, time, address, panditId,userId}); 
 
-        // Create new booking
-        const newBooking = new PoojaBook({
-            name,
-            phoneNo,
-            poojaType,
-            date,
-            time,
-            address,
-            panditId,
-            userId,
-            status: "confirmed"
-        });
-
-        // Save booking and update related documents
         await newBooking.save();
-
-        // Update Pandit's bookings
+        console.log("newBooking", newBooking);
         await Pandit.findByIdAndUpdate(panditId, {
-            $push: { BookingId: newBooking._id }
-        }, { new: true });
-
-        // Update User's bookings
+            $push : {BookingId: newBooking._id}
+        });
         await User.findByIdAndUpdate(userId, {
-            $push: { BookingId: newBooking._id }
-        }, { new: true });
-
-        console.log("Booking created successfully:", newBooking);
-        
-        res.status(201).json({ 
-            success: true,
-            message: 'Booking created successfully', 
-            booking: newBooking 
+            $push : {BookingId: newBooking._id}
         });
-
+        console.log(newBooking);
+        res.status(201).json({ message: 'Booking created successfully', booking: newBooking });
     } catch (error) {
-        console.error("Error in createBooking:", error);
-        res.status(500).json({ 
-            success: false,
-            message: 'Error creating booking', 
-            error: error.message 
-        });
+        console.log(error.message)
+        res.status(500).json({ message: 'Error creating booking', error: error.message });
     }
 };
