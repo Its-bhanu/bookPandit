@@ -1,118 +1,200 @@
 import React, { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { useState } from "react";
-import Signup from "../pages/Signup"
+import { motion } from "framer-motion";
+
 import Header from "../components/Header";
-import Footer from "../components/Footer";
 import Achievements from "../components/Achievements";
 import Testimonials from "../components/Testimonials";
-import { motion } from "framer-motion";
 
 const HomePage = () => {
   const location = useLocation();
 
   useEffect(() => {
-    if (location?.state && location.state?.scrollToService) {
+    if (location?.state?.scrollToService) {
       document.getElementById("services").scrollIntoView({ behavior: "smooth" });
     }
   }, [location]);
 
   return (
-     
-    <div className="bg-gray-100">
+    <div className="bg-gray-100 relative font-sans">
       <Header />
-      <section className="text-center py-16 bg-white shadow-md">
-        <div className="flex justify-center items-center">
-        <img src="https://cdni.iconscout.com/illustration/premium/thumb/male-pandit-showing-mobile-2775575-2319298.png" alt="Online Pandit" className="mx-auto" 
-         height="90px"
-         width="150px"
-         />
+
+      {/* Hero Section */}
+      <section className="text-center py-20 bg-gradient-to-b from-white to-gray-100 shadow-md">
+        <div className="flex justify-center items-center mb-6">
+          <img
+            src="https://cdni.iconscout.com/illustration/premium/thumb/male-pandit-showing-mobile-2775575-2319298.png"
+            alt="Online Pandit"
+            className="h-36 w-auto"
+          />
         </div>
+
         <motion.h1
-        initial={{ opacity: 0, y: -50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1 }} className="text-4xl font-bold text-gray-800">Welcome to OnlinePandit</motion.h1>
-        < p
-         
-        className="text-lg text-gray-600 mt-4">
-        <h3>We provide highly qualified and experienced Panditjee for all communities
-        like Gujarati, Rajasthani, Marathi, Sindhi, Bihari, Bengali, and Punjabi.</h3>
-          Book a verified Pandit for your religious ceremonies or register as a Pandit.
+          initial={{ opacity: 0, y: -40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1 }}
+          className="text-5xl font-extrabold text-gray-800"
+        >
+          Welcome to OnlinePandit
+        </motion.h1>
+
+        <p className="text-lg text-gray-600 mt-4 max-w-3xl mx-auto">
+          <strong>India’s trusted platform</strong> to connect you with qualified and verified
+          Pandits from all communities. Book rituals, seek spiritual guidance, or offer online
+          consultations — all at your fingertips.
         </p>
-        <div className="mt-6 justify-center flex gap-4">
-            
-            <Link to="/PanditSignIn" className="bg-green-500 text-white px-6 py-3 rounded-2xl hover:bg-green-700">SignIn As a Pandit</Link>
+
+        <div className="mt-6 flex justify-center gap-4">
+          <Link
+            to="/PanditSignIn"
+            className="bg-green-600 text-white px-6 py-3 rounded-full hover:bg-green-700 shadow-lg"
+          >
+            Sign In as Pandit
+          </Link>
+          </div>
+
+          <div className="mt-2 flex justify-center">
+    <button
+      onClick={() =>
+        document.getElementById("services")?.scrollIntoView({ behavior: "smooth" })
+      }
+      className="bg-blue-600 text-white px-6 py-3 rounded-full hover:bg-indigo-700 shadow-lg transition"
+    >
+      Explore Services
+    </button>
+  </div>
+
+        {/* Highlights */}
+        <div className="mt-12 flex flex-wrap justify-center gap-8 text-center">
+          <div className="bg-white p-6 rounded-2xl shadow-md w-72">
+            <h3 className="text-xl font-bold text-green-600">Verified Experts</h3>
+            <p className="text-gray-600 mt-2">1000+ verified Pandits from across India.</p>
+          </div>
+          <div className="bg-white p-6 rounded-2xl shadow-md w-72">
+            <h3 className="text-xl font-bold text-indigo-600">Anywhere, Anytime</h3>
+            <p className="text-gray-600 mt-2">Book services across cities with real-time availability.</p>
+          </div>
+          <div className="bg-white p-6 rounded-2xl shadow-md w-72">
+            <h3 className="text-xl font-bold text-yellow-600">Secure & Seamless</h3>
+            <p className="text-gray-600 mt-2">Encrypted platform to protect your privacy and details.</p>
+          </div>
         </div>
-        <section className="py-16 bg-gray-50">
+      </section>
+
+      {/* Info Section */}
+      <section className="py-16 bg-white">
         <div className="max-w-6xl mx-auto px-6">
-       
-        <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-800 mb-8">
-          Trusted Vedic and Hindu Puja Services
+          <h2 className="text-4xl font-bold text-center text-gray-800 mb-10">
+            Trusted Vedic and Hindu Puja Services
+          </h2>
+
+          <div className="bg-gray-50 p-8 rounded-3xl shadow-lg text-center">
+            <p className="text-gray-600 text-lg">
+              Book Pandits for all your rituals — Havan, Griha Pravesh, Satyanarayan Katha,
+              Engagement, Festival Puja, Wedding Ceremony, and more. We offer doorstep services
+              along with virtual puja options.
+            </p>
+
+            <p className="text-gray-600 text-lg mt-4">
+              All our Pandits are trained in Vedic rituals and speak local languages. Transparent
+              pricing. End-to-end arrangements. On-time service.
+            </p>
+
+            <h3 className="text-xl font-semibold text-gray-900 mt-6">
+              Call to book instantly –{" "}
+              <a
+                href="tel:+918854072557"
+                className="text-blue-500 underline hover:text-blue-700"
+              >
+                +91 88540 72557
+              </a>
+            </h3>
+          </div>
+        </div>
+      </section>
+
+      {/* Services Section */}
+      <section id="services" className="py-20 bg-gray-100">
+        <h2 className="text-4xl font-bold text-center text-gray-800 mb-12">
+          Our Services
         </h2>
-        
-        
-        <div className="bg-white p-8 rounded-lg shadow-md">
-          <p
-           
-          className="text-gray-600 leading-relaxed text-lg">
-            OnlinePandit is the most trusted platform for availing Vedic and Hindu Puja services like performing Vedic rituals, religious ceremonies, Vastu Yagya, and many more. We provide the best experienced and well-known purohits and pandits at your place to do puja. We are a leading Pandit booking website.
-          </p>
 
-          <p 
-           className="text-gray-600 leading-relaxed text-lg mt-4">
-            Now, you can perform your pooja with our professional purohits and pandits. Our pandits perform rituals like Havan, Yagya, Shanti Vidhi, Shubh Vivah – Wedding Ceremony, Satyanarayan Katha, Griha Pravesh, Namkaran Sanskar, Nava Graha Shanti, Engagement, Festival Puja, Janeu, Ganesh Puja, Ram Katha, Mundan Sanskar, Shrimant Puja, Namkaran, Bhagwat Katha, Vastu Shanti, etc.
-          </p>
-
-          
-
-          <h3 className="text-xl md:text-2xl font-bold text-gray-900 mt-6">
-            Book Online Pandit For Any Puja at Your Place In Just One Call –{" "}
-            <a href="tel:+918854072557" className="text-blue-500 hover:underline">
-              +91 8854072557
-            </a>
-          </h3>
-        </div>
-      </div>
-      </section>
-      </section>
-
-      
-      <section className="py-16 px-8" id="services">
-        <h2 className="text-3xl font-bold text-center text-gray-800">Our Services</h2>
-        <div className="mt-8 flex flex-wrap justify-center gap-8">
-          <div className="bg-white p-6 shadow-md rounded-lg w-80 text-center hover:scale-105 ">
-            <h3 className="text-xl font-semibold">Pooja Booking</h3>
-            <p className="text-gray-600 mt-2">
-              Book a Pandit for your special occasions. We provide personalized rituals with expert guidance, end-to-end puja arrangements, and more.
+        <div className="grid md:grid-cols-3 gap-10 max-w-6xl mx-auto px-6">
+          {/* Pooja Booking */}
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            className="bg-white p-8 rounded-3xl shadow-xl border-t-4 border-green-500"
+          >
+            <h3 className="text-2xl font-bold mb-3 text-gray-800">Pooja Booking</h3>
+            <p className="text-gray-600 mb-4">
+              Personalized rituals by experienced Pandits with all arrangements taken care of.
             </p>
-            <Link to="/UserSignin" className="bg-green-400 text-white px-6 py-3 rounded-2xl hover:bg-green-700 mt-4 inline-block">Book A Pooja</Link>
-            
-          </div>
-          <div className="bg-white p-6 shadow-md rounded-lg w-80 text-center hover:scale-105 ">
-            <h3 className="text-xl font-semibold">Astrology Consultation</h3>
-            <p className="text-gray-600 mt-2">
-              Get expert astrology consultations for your personal and professional life. Our experienced astrologers provide accurate and insightful readings.
+            <Link
+              to="/UserSignin"
+              className="inline-block bg-green-500 text-white px-6 py-2 rounded-full hover:bg-green-700 transition"
+            >
+              Book A Pooja
+            </Link>
+          </motion.div>
+
+          {/* Astrology Consultation */}
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            className="bg-white p-8 rounded-3xl shadow-xl border-t-4 border-blue-500"
+          >
+            <h3 className="text-2xl font-bold mb-3 text-gray-800">Astrology Consultation</h3>
+            <p className="text-gray-600 mb-4">
+              Get astrological guidance for marriage, career, health & more from certified experts.
             </p>
-            <Link to="/AstroConsult" 
-              
-             className="bg-blue-400 text-white px-6 py-3 rounded-2xl hover:bg-blue-700 mt-4 inline-block" >Consult Now</Link>
-          </div>
-          <div className="bg-white p-6 shadow-md rounded-lg w-80 text-center hover:scale-105 ">
-            <h3 className="text-xl font-semibold">Vastu Shastra</h3>
-            <p className="text-gray-600 mt-2">
-              Enhance the positive energy in your home or office with our Vastu Shastra services. Our experts provide comprehensive Vastu analysis and solutions.
+            <Link
+              to="/AstroConsult"
+              className="inline-block bg-blue-500 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition"
+            >
+              Consult Now
+            </Link>
+          </motion.div>
+
+          {/* Vastu Shastra */}
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            className="bg-white p-8 rounded-3xl shadow-xl border-t-4 border-red-500"
+          >
+            <h3 className="text-2xl font-bold mb-3 text-gray-800">Vastu Shastra</h3>
+            <p className="text-gray-600 mb-4">
+              Let positive energy flow in your space with our expert Vastu consultations.
             </p>
-            <Link to="/vastuShastra" className="bg-red-400 text-white px-6 py-3 rounded-2xl hover:bg-red-700 mt-4 inline-block">Learn More</Link>
-          </div>
+            <Link
+              to="/vastuShastra"
+              className="inline-block bg-red-500 text-white px-6 py-2 rounded-full hover:bg-red-700 transition"
+            >
+              Learn More
+            </Link>
+          </motion.div>
         </div>
       </section>
 
-      <Achievements/>
-      
+      <Achievements />
       <Testimonials />
 
-         
-      
+      {/* Floating WhatsApp and Phone Icons */}
+      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-4">
+        <a
+          href="https://wa.me/918854072557"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="bg-green-500 hover:bg-green-600 text-white text-xl p-4 rounded-full shadow-xl transition-transform transform hover:scale-110"
+          title="Chat on WhatsApp"
+        >
+          💬
+        </a>
+        <a
+          href="tel:+918854072557"
+          className="bg-blue-500 hover:bg-blue-600 text-white text-xl p-4 rounded-full shadow-xl transition-transform transform hover:scale-110"
+          title="Call Us"
+        >
+          📞
+        </a>
+      </div>
     </div>
   );
 };

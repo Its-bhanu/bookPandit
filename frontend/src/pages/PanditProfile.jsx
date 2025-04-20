@@ -8,6 +8,8 @@ const PanditProfilesList = () => {
   const [pandits, setPandits] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [processingPayment, setProcessingPayment] = useState(false); // State for payment processing
+  const [processingPanditId, setProcessingPanditId] = useState(null); // Track which pandit is being processed
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -18,14 +20,13 @@ const PanditProfilesList = () => {
     script.src = "https://checkout.razorpay.com/v1/checkout.js";
     script.async = true;
     document.body.appendChild(script);
-}, []);
+  }, []);
 
   useEffect(() => {
     const fetchPandits = async () => {
       try {
         const response = await axios.get("https://book-pandit-mmed.vercel.app/api/pandits/AllProfiles");
         setPandits(response.data);
-        console.log(response.data);
         toast.success("Pandit profiles loaded successfully!");
       } catch (error) {
         setError("Failed to fetch pandit profiles");
@@ -39,29 +40,37 @@ const PanditProfilesList = () => {
   }, []);
 
   const handleBooking = async (panditId) => {
+    setProcessingPayment(true);
+    setProcessingPanditId(panditId);
     try {
-      console.log('Sending payload:', { formData, panditId }); // Debugging
+      console.log('Sending payload:', { formData, panditId });
       const bookingResponse = await axios.post("https://book-pandit-mmed.vercel.app/api/booking/poojaBooks", { formData, panditId });
       const bookingId = bookingResponse.data.booking._id;
       toast.success("Pooja booking created successfully!");
-      handlepayment(bookingId);
+      handlePayment(bookingId);
     } catch (error) {
       console.error('Error during booking:', error.response ? error.response.data : error.message);
       toast.error(error.response?.data?.message || "Error processing booking");
+      setProcessingPayment(false);
+      setProcessingPanditId(null);
     }
   };
 
-  const handlepayment = async (bookingId) => {
+  const handlePayment = async (bookingId) => {
     try {
-      console.log( "Booking Id: ",bookingId)
-      const paymentResponse = await axios.post("https://book-pandit-mmed.vercel.app/api/payment/createOrder", { bookingId  });
+      console.log("Booking Id: ", bookingId);
+      const paymentResponse = await axios.post("https://book-pandit-mmed.vercel.app/api/payment/createOrder", { 
+        bookingId,
+        amount: 2100 // Setting amount to 21 rupees (Razorpay expects amount in paise)
+      });
       navigate("/feedback");
+
       const { id, amount, currency } = paymentResponse.data;
 
       const options = {
         key: "rzp_test_2f29o3Omes0sJq", 
-        amount,
-        currency,
+        amount: 2100, // Hardcoded to 21 rupees (2100 paise)
+        currency: "INR",
         name: "Pandit Booking",
         description: "Book a Pandit for your ceremony",
         order_id: id,
@@ -78,19 +87,22 @@ const PanditProfilesList = () => {
 
             if (verifyResponse.data.success) {
               toast.success("Payment verified! Pandit successfully booked.");
-              // navigate("/feedback");
+              navigate("/feedback");
             } else {
               throw new Error("Payment verification failed.");
             }
           } catch (error) {
             console.error("Payment verification error:", error);
             toast.error(error.response?.data?.message || "Payment verification failed.");
+          } finally {
+            setProcessingPayment(false);
+            setProcessingPanditId(null);
           }
         },
         prefill: {
           name: formData.name,
-          email: formData.email,
-          contact: formData.contact,
+          email: formData.email || "customer@example.com",
+          contact: formData.phoneNo || "9999999999",
         },
         theme: {
           color: "#3399cc",
@@ -98,9 +110,16 @@ const PanditProfilesList = () => {
       };
       
       const rzp1 = new window.Razorpay(options);
+      rzp1.on('payment.failed', function (response) {
+        toast.error(`Payment failed: ${response.error.description}`);
+        setProcessingPayment(false);
+        setProcessingPanditId(null);
+      });
       rzp1.open();
     } catch (error) {
       toast.error("Error processing booking and payment");
+      setProcessingPayment(false);
+      setProcessingPanditId(null);
     }
   };
 
@@ -125,11 +144,27 @@ const PanditProfilesList = () => {
               <p className="text-gray-600 mb-1"><strong>Address:</strong> {pandit.address}</p>
               <p className="text-gray-600 mb-3"><strong>Age:</strong> {pandit.age} years</p>
               <p className="text-gray-600 mb-3"><strong>Expertise:</strong> {pandit.expertise}</p>
+              <p className="text-green-600 font-bold mb-3">Booking Fee: ₹21</p>
               <button 
-                className="mt-3 px-6 py-2 bg-green-600 text-white text-lg rounded-lg hover:bg-green-700 transition duration-300 shadow-md"
-                onClick={() => {handleBooking(pandit._id)}}
+                className={`mt-3 px-6 py-2 text-lg rounded-lg transition duration-300 shadow-md flex items-center justify-center ${
+                  processingPayment && processingPanditId === pandit._id
+                    ? 'bg-gray-400 cursor-not-allowed'
+                    : 'bg-green-600 hover:bg-green-700 text-white'
+                }`}
+                onClick={() => handleBooking(pandit._id)}
+                disabled={processingPayment && processingPanditId === pandit._id}
               >
-                Pay & Book Now
+                {processingPayment && processingPanditId === pandit._id ? (
+                  <>
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Processing...
+                  </>
+                ) : (
+                  "Pay & Book Now (₹21)"
+                )}
               </button>
             </div>
           </div>

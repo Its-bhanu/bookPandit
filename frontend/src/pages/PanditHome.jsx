@@ -5,11 +5,16 @@ import "swiper/css";
 import axios from "axios";
 import "swiper/css/pagination";
 import { Pagination, Autoplay } from "swiper/modules";
-import { FaBars, FaTimes } from "react-icons/fa";
+import { FaBars, FaTimes, FaCommentDots, FaPaperPlane, FaTimesCircle } from "react-icons/fa";
 
 const PanditHomePage = () => {
   const [users, setUsers] = useState([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [messages, setMessages] = useState([
+    { text: " Here Pandit Can be Chat with user at a real Time", sender: "bot" }
+  ]);
   const token = localStorage.getItem("panditsignintoken");
 
   useEffect(() => {
@@ -46,8 +51,96 @@ const PanditHomePage = () => {
     setIsMenuOpen((prev) => !prev);
   };
 
+  const toggleChat = () => {
+    setIsChatOpen((prev) => !prev);
+  };
+
+  const handleSendMessage = () => {
+    if (message.trim() === "") return;
+    
+    // Add user message
+    setMessages(prev => [...prev, { text: message, sender: "user" }]);
+    setMessage("");
+    
+    // Simulate bot response after a delay
+    setTimeout(() => {
+      setMessages(prev => [...prev, { 
+        text: "Chat With user will be Comming Soon...", 
+        sender: "bot" 
+      }]);
+    }, 1000);
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleSendMessage();
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100 relative">
+      {/* Chat Icon */}
+      <motion.div 
+        className="fixed bottom-8 right-8 z-50 cursor-pointer"
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        onClick={toggleChat}
+      >
+        <div className="bg-blue-600 text-white rounded-full p-4 shadow-lg">
+          {isChatOpen ? <FaTimesCircle size={24} /> : <FaCommentDots size={24} />}
+        </div>
+      </motion.div>
+
+      {/* Chat Box */}
+      {isChatOpen && (
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="fixed bottom-24 right-8 w-80 bg-white rounded-lg shadow-xl z-50 overflow-hidden"
+        >
+          <div className="bg-blue-600 text-white p-4 flex justify-between items-center">
+            <h3 className="font-bold">Chat With User</h3>
+            <button onClick={toggleChat} className="text-white">
+              <FaTimes />
+            </button>
+          </div>
+          
+          <div className="h-64 p-4 overflow-y-auto bg-gray-50">
+            {messages.map((msg, index) => (
+              <div 
+                key={index} 
+                className={`mb-3 ${msg.sender === "user" ? "text-right" : "text-left"}`}
+              >
+                <div 
+                  className={`inline-block p-2 rounded-lg ${msg.sender === "user" 
+                    ? "bg-blue-500 text-white" 
+                    : "bg-gray-200 text-gray-800"}`}
+                >
+                  {msg.text}
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          <div className="p-3 border-t flex">
+            <input
+              type="text"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              onKeyPress={handleKeyPress}
+              placeholder="Type your message..."
+              className="flex-1 border rounded-l-lg p-2 focus:outline-none"
+            />
+            <button
+              onClick={handleSendMessage}
+              className="bg-blue-600 text-white px-4 rounded-r-lg hover:bg-blue-700"
+            >
+              <FaPaperPlane />
+            </button>
+          </div>
+        </motion.div>
+      )}
+
       {/* Header */}
       <header className="bg-gradient-to-r from-blue-700 to-purple-700 text-white py-5 px-6 flex justify-between items-center shadow-lg relative">
         <h1 className="text-2xl md:text-3xl font-extrabold">Pandit Ji Dashboard</h1>

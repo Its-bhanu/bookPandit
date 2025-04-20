@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { FaBars, FaTimes } from "react-icons/fa";
-import PanditChat from "./ChatPage";
+
 const AstroConsult = () => {
   const [message, setMessage] = useState("");
   const [astrologers, setAstrologers] = useState([]);
@@ -17,22 +17,33 @@ const AstroConsult = () => {
         setIsLoading(true);
         const response = await axios.get("https://book-pandit-mmed.vercel.app/api/pandits/AllProfiles");
         
-       
-        console.log("API Response:", response);
-        console.log("Response Data:", response.data);
+        console.log("Full API Response:", response);
         
+        // First check if response.data exists and is an array
+        if (!response.data) {
+          throw new Error("No data received from API");
+        }
+        const dataArray = Array.isArray(response.data) ? response.data : [response.data];
         
-        const onlyAstrologers = response.data.filter((astro) => {
+        const filteredAstrologers = dataArray.filter((astro) => {
+          if (!astro) return false;
           
-          if (!astro || !astro.expertise) return false;
+    
+          if (astro.expertise) {
+            const expertise = astro.expertise.toString().toLowerCase();
+            return expertise.includes("astrolog") || expertise.includes("astrology");
+          }
           
-          
-          const expertise = astro.expertise.toString().toLowerCase();
-          return expertise.includes("astrology");
+          // If no expertise field, include them anyway (you can remove this if you want strict filtering)
+          return false;
         });
         
-        console.log("Filtered Astrologers:", onlyAstrologers);
-        setAstrologers(onlyAstrologers);
+        console.log("Filtered Astrologers:", filteredAstrologers);
+        setAstrologers(filteredAstrologers);
+        
+        if (filteredAstrologers.length === 0) {
+          setMessage("No astrologers found. Please check back later.");
+        }
       } catch (error) {
         console.error("Error fetching astrologers", error);
         setMessage("Failed to load astrologers. Please try again later.");
@@ -40,11 +51,11 @@ const AstroConsult = () => {
         setIsLoading(false);
       }
     };
+    
     fetchAstrologers();
   }, []);
 
   const handleChatWithPandit = (panditId) => {
-    // navigate(`/panditChat/${panditId}`);
     navigate("/panditChat", {
       state: {
         panditId: panditId,
@@ -129,46 +140,40 @@ const AstroConsult = () => {
         ) : astrologers.length === 0 ? (
           <div className="text-center text-gray-500 py-10">
             No astrologers available at the moment. Please check back later.
-           
-            {astrologers && <div className="mt-4 text-xs">Debug: {JSON.stringify(astrologers)}</div>}
+            <div className="mt-4 text-xs">Debug: API response structure might be different than expected</div>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {astrologers.map((astro, index) => {
-              // Log each astrologer's data
-              console.log(`Astrologer ${index}:`, astro);
-              
-              return (
-                <motion.div 
-                  key={astro._id || astro.id || index} 
-                  className="bg-white shadow-xl rounded-lg p-6 transform hover:scale-105 transition duration-300"
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.98 }}
+            {astrologers.map((astro, index) => (
+              <motion.div 
+                key={astro._id || index} 
+                className="bg-white shadow-xl rounded-lg p-6 transform hover:scale-105 transition duration-300"
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <img
+                  src={astro.image || astro.profileImage || "https://www.creativehatti.com/wp-content/uploads/edd/2022/11/Indian-pandit-is-sitting-with-greet-hand-2-large.jpg"}
+                  alt="Astrologer"
+                  className="w-22 h-22 object-cover rounded-full border-4 border-gray-200 mb-4 mx-auto"
+                />
+                <h4 className="text-lg font-semibold text-gray-800">
+                  {astro.fullname || astro.name || astro.username || "Astrologer"}
+                </h4>
+                <p className="text-gray-600">Age: {astro.age || "Not specified"}</p>
+                <p className="text-gray-600">Expertise: {astro.expertise || "Astrology"}</p>
+                <p className="text-gray-600">Experience: {astro.experience || "Not specified"}</p>
+                <p className="text-gray-600">Contact: {astro.mobile || astro.phone || "Not provided"}</p>
+                <p className="text-gray-600">
+                  {astro.description || `An experienced astrologer in ${astro.expertise || "Astrology"}`}
+                </p>
+                <button 
+                  className="mt-4 w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition-colors"
+                  onClick={() => handleChatWithPandit(astro._id)}
                 >
-                  <img
-                    src={astro.image || astro.profileImage || "https://www.creativehatti.com/wp-content/uploads/edd/2022/11/Indian-pandit-is-sitting-with-greet-hand-2-large.jpg"}
-                    alt="Pandit"
-                    className="w-22 h-22 object-cover rounded-full border-4 border-gray-200 mb-4 mx-auto"
-                  />
-                  <h4 className="text-lg font-semibold text-gray-800">
-                    {astro.fullname || astro.name || astro.username || "Pandit"}
-                  </h4>
-                  <p className="text-gray-600">Age: {astro.age || "Not specified"}</p>
-                  <p className="text-gray-600">Expertise: {astro.expertise || "Astrology"}</p>
-                  <p className="text-gray-600">Experience: {astro.experience || "Not specified"}</p>
-                  <p className="text-gray-600">Contact: {astro.mobile || astro.phone || "Not provided"}</p>
-                  <p className="text-gray-600">
-                    An experienced and knowledgeable astrologer in "{astro.expertise || "Astrology"}" ready to guide you
-                  </p>
-                  <button 
-                    className="mt-4 w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition-colors"
-                    onClick={() => handleChatWithPandit(astro._id || astro.id || index)}
-                  >
-                    Chat with Pandit
-                  </button>
-                </motion.div>
-              );
-            })}
+                  Chat Now
+                </button>
+              </motion.div>
+            ))}
           </div>
         )}
       </section>
