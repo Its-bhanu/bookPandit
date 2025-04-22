@@ -64,7 +64,7 @@ module.exports.createBooking = async (req, res) => {
             User.findById(userId),
             Pandit.findById(panditId)
         ]);
-
+ 
         // Format date and time
         const formattedDate = format(new Date(date), 'PPPP');
         const formattedTime = format(new Date(`1970-01-01T${time}`), 'hh:mm a');
