@@ -2,13 +2,13 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { FaBars, FaTimes } from "react-icons/fa";
+import { FaSearch, FaStar, FaRegStar } from "react-icons/fa";
 
 const AstroConsult = () => {
   const [message, setMessage] = useState("");
   const [astrologers, setAstrologers] = useState([]);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -16,34 +16,12 @@ const AstroConsult = () => {
       try {
         setIsLoading(true);
         const response = await axios.get("https://book-pandit-mmed.vercel.app/api/pandits/AllProfiles");
-        
-        console.log("Full API Response:", response);
-        
-        // First check if response.data exists and is an array
-        if (!response.data) {
-          throw new Error("No data received from API");
-        }
         const dataArray = Array.isArray(response.data) ? response.data : [response.data];
-        
-        const filteredAstrologers = dataArray.filter((astro) => {
-          if (!astro) return false;
-          
-    
-          if (astro.expertise) {
-            const expertise = astro.expertise.toString().toLowerCase();
-            return expertise.includes("astrolog") || expertise.includes("astrology");
-          }
-          
-          // If no expertise field, include them anyway (you can remove this if you want strict filtering)
-          return false;
-        });
-        
-        console.log("Filtered Astrologers:", filteredAstrologers);
-        setAstrologers(filteredAstrologers);
-        
-        if (filteredAstrologers.length === 0) {
-          setMessage("No astrologers found. Please check back later.");
-        }
+        const filtered = dataArray.filter((astro) =>
+          astro?.expertise?.toString().toLowerCase().includes("astrolog")
+        );
+        setAstrologers(filtered);
+        if (filtered.length === 0) setMessage("No astrologers found at the moment.");
       } catch (error) {
         console.error("Error fetching astrologers", error);
         setMessage("Failed to load astrologers. Please try again later.");
@@ -51,132 +29,113 @@ const AstroConsult = () => {
         setIsLoading(false);
       }
     };
-    
     fetchAstrologers();
   }, []);
 
   const handleChatWithPandit = (panditId) => {
     navigate("/panditChat", {
-      state: {
-        panditId: panditId,
-      },
+      state: { panditId },
     });
   };
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
+  const filteredAstrologers = astrologers.filter(astro => {
+    return astro.fullname?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+           astro.expertise?.toLowerCase().includes(searchTerm.toLowerCase());
+  });
+
+  const renderStars = (rating) => {
+    return [...Array(5)].map((_, i) => (
+      i < rating ? <FaStar key={i} className="text-yellow-400" /> : <FaRegStar key={i} className="text-yellow-400" />
+    ));
   };
 
-  // Loader Component
-  const Loader = () => (
-    <div className="flex justify-center items-center py-20">
-      <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div>
-    </div>
-  );
-
   return (
-    <div className="min-h-screen bg-gray-100">
-      {/* Header with Mobile Menu */}
-      <header className="bg-blue-700 text-white py-5 px-6 flex justify-between items-center shadow-lg relative">
-        <h1 className="text-3xl font-extrabold">Astrology Consultation</h1>
-        
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex gap-6 text-lg">
-          <a href="/" className="hover:text-gray-300">Home</a>
-          <a href="/services" className="hover:text-gray-300">Services</a>
-          <a href="/contactUs" className="hover:text-gray-300">Contact</a>
-        </nav>
-        
-        {/* Mobile Menu Button */}
-        <button 
-          className="md:hidden text-2xl focus:outline-none"
-          onClick={toggleMenu}
-        >
-          {isMenuOpen ? <FaTimes /> : <FaBars />}
-        </button>
-        
-        {/* Mobile Menu Dropdown */}
-        {isMenuOpen && (
-          <motion.div 
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="absolute top-full left-0 right-0 bg-blue-800 md:hidden z-10 shadow-lg"
-          >
-            <div className="flex flex-col p-4 space-y-4">
-              <a 
-                href="/" 
-                className="hover:text-gray-300 border-b border-blue-700 pb-2"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Home
-              </a>
-              <a 
-                href="/services" 
-                className="hover:text-gray-300 border-b border-blue-700 pb-2"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Services
-              </a>
-              <a 
-                href="/contactUs" 
-                className="hover:text-gray-300"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Contact
-              </a>
-            </div>
-          </motion.div>
-        )}
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-indigo-700 text-white py-4 px-6 shadow-md">
+        <h1 className="text-2xl font-bold">Astrology Consultation</h1>
       </header>
 
-      <section className="py-12 px-4 md:px-8">
-        <h3 className="text-3xl font-bold text-gray-800 text-center mb-6">🔮 Meet Our Expert Astrologers</h3>
-        
-        {isLoading ? (
-          <Loader />
-        ) : message ? (
-          <div className="text-center text-red-500 py-10">{message}</div>
-        ) : astrologers.length === 0 ? (
-          <div className="text-center text-gray-500 py-10">
-            No astrologers available at the moment. Please check back later.
-            <div className="mt-4 text-xs">Debug: API response structure might be different than expected</div>
+      {/* Search Section */}
+      <section className="py-8 px-4 md:px-12 bg-white shadow-sm">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">
+            Connect with Verified Astrologers
+          </h2>
+          <div className="relative max-w-md mx-auto">
+            <input
+              type="text"
+              placeholder="Search astrologers..."
+              className="w-full px-4 py-2 pl-10 pr-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <FaSearch className="absolute left-3 top-3 text-gray-400" />
           </div>
+        </div>
+      </section>
+
+      {/* Main Content */}
+      <main className="py-8 px-4 md:px-12 max-w-6xl mx-auto">
+        {isLoading ? (
+          <div className="flex justify-center items-center py-20">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
+          </div>
+        ) : message ? (
+          <div className="text-center py-10 text-gray-600">{message}</div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {astrologers.map((astro, index) => (
-              <motion.div 
-                key={astro._id || index} 
-                className="bg-white shadow-xl rounded-lg p-6 transform hover:scale-105 transition duration-300"
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.98 }}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredAstrologers.map((astro, index) => (
+              <motion.div
+                key={astro._id || index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+                className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200"
               >
-                <img
-                  src={astro.image || astro.profileImage || "https://www.creativehatti.com/wp-content/uploads/edd/2022/11/Indian-pandit-is-sitting-with-greet-hand-2-large.jpg"}
-                  alt="Astrologer"
-                  className="w-22 h-22 object-cover rounded-full border-4 border-gray-200 mb-4 mx-auto"
-                />
-                <h4 className="text-lg font-semibold text-gray-800">
-                  {astro.fullname || astro.name || astro.username || "Astrologer"}
-                </h4>
-                <p className="text-gray-600">Age: {astro.age || "Not specified"}</p>
-                <p className="text-gray-600">Expertise: {astro.expertise || "Astrology"}</p>
-                <p className="text-gray-600">Experience: {astro.experience || "Not specified"}</p>
-                <p className="text-gray-600">Contact: {astro.mobile || astro.phone || "Not provided"}</p>
-                <p className="text-gray-600">
-                  {astro.description || `An experienced astrologer in ${astro.expertise || "Astrology"}`}
-                </p>
-                <button 
-                  className="mt-4 w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition-colors"
-                  onClick={() => handleChatWithPandit(astro._id)}
-                >
-                  Chat Now
-                </button>
+                <div className="p-6">
+                  <div className="flex flex-col items-center mb-4">
+                    <img
+                      src={astro.image || astro.profileImage || "https://www.creativehatti.com/wp-content/uploads/edd/2022/11/Indian-pandit-is-sitting-with-greet-hand-2-large.jpg"}
+                      alt={astro.fullname}
+                      className="w-20 h-20 rounded-full border-2 border-indigo-100 object-cover"
+                    />
+                    <h3 className="text-xl font-semibold mt-3 text-gray-800">{astro.fullname || "Astrologer"}</h3>
+                    <p className="text-indigo-600 text-sm">{astro.expertise || "Vedic Astrologer"}</p>
+                  </div>
+
+                  <div className="flex justify-center mb-3">
+                    <div className="flex">
+                      {renderStars(4)}
+                      <span className="ml-1 text-gray-600 text-sm">(24)</span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2 text-sm text-gray-600 mb-4">
+                    <p><span className="font-medium">Experience:</span> {astro.experience || '5'} years</p>
+                    <p><span className="font-medium">Languages:</span> {astro.languages || 'Hindi, English'}</p>
+                    <p><span className="font-medium">Specialty:</span> Vedic, Horoscope, Palmistry</p>
+                  </div>
+
+                  <button
+                    onClick={() => handleChatWithPandit(astro._id)}
+                    className="w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 transition-colors"
+                  >
+                    Chat Now
+                  </button>
+                </div>
               </motion.div>
             ))}
           </div>
         )}
-      </section>
+      </main>
+
+      {/* Footer */}
+      {/* <footer className="bg-gray-800 text-white py-6 px-4 md:px-12 mt-12">
+        <div className="max-w-6xl mx-auto text-center">
+          <p>© {new Date().getFullYear()} AstroConnect. All rights reserved.</p>
+        </div>
+      </footer> */}
     </div>
   );
 };

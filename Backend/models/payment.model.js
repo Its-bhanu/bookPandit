@@ -4,6 +4,8 @@ const paymentSchema = new mongoose.Schema({
     paymentId: {
         type: String,
         //  required: true
+        unique: true,
+        sparce:true
     },
     orderId: {
         type: String,
@@ -38,6 +40,13 @@ const paymentSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
+    signature: {
+        type: String
+      },
+      method: {
+        type: String,
+        enum: ['card', 'netbanking', 'wallet', 'upi', 'emi', null]
+      },
 
 }, 
 );

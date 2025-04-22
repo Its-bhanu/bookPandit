@@ -44,35 +44,85 @@ module.exports.createOrder = async (req, res) => {
 };
 
 module.exports.verifyPayment = async (req, res) => {
-    try {
-      const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
-      
+  try {
+    const { 
+      razorpay_order_id, 
+      razorpay_payment_id, 
+      razorpay_signature,
+      bookingId 
+    } = req.body;
+
+    // Validate required fields
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
-      return res.status(400).json({ success: false, message: "Missing payment details" });
+      return res.status(400).json({ 
+        success: false, 
+        message: "Missing payment verification details" 
+      });
     }
-    const body = razorpay_order_id + "|" + razorpay_payment_id;
-      const generatedSignature = crypto
-        .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
-        .update(body.toString())
-        .digest("hex");
 
-        console.log("Generated Signature:", generatedSignature);
-        console.log("Received Signature:", razorpay_signature);
-        console.log("payment id:",razorpay_payment_id);
-  
-        const isAuthentic = expectedSignature === razorpay_signature;
-        if(isAuthentic){
-          const payment=await Payment.findOneAndUpdate(
-            { orderId: razorpay_order_id },
-            { status: "paid", paymentId: razorpay_payment_id }
-          );
-          console.log("Payment successfully verified and updated:", payment);
-          console.log("Payment verified successfully for order:", razorpay_order_id);
-          res.status(200).json({ success: true, message: "Payment verified successfully" });
+    // console.log("Verifying payment for order:", razorpay_order_id);
+    // console.log("Payment ID:", razorpay_payment_id);
+    // console.log("Received signature:", razorpay_signature);
 
-        }
-    } catch (error) {
-      console.error("Payment verification error:", error);
-      res.status(500).json({ success: false, error: error.message });
+    // Generate expected signature
+    const body = `${razorpay_order_id}|${razorpay_payment_id}`;
+    const expectedSignature = crypto
+      .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
+      .update(body)
+      .digest('hex');
+
+    console.log("Generated signature:", expectedSignature);
+
+    // Verify signature
+    if (expectedSignature !== razorpay_signature) {
+      console.error("Signature mismatch - possible tampering detected");
+      return res.status(400).json({ 
+        success: false, 
+        message: "Invalid payment signature" 
+      });
     }
-  };
+
+    // Update payment status
+    const updatedPayment = await Payment.findOneAndUpdate(
+      { orderId: razorpay_order_id },
+      { 
+        status: 'completed',
+        paymentId: razorpay_payment_id,
+        signature: razorpay_signature,
+        verifiedAt: new Date() 
+      },
+      { new: true }
+    );
+
+    if (!updatedPayment) {
+      console.error("Payment record not found for order:", razorpay_order_id);
+      return res.status(404).json({ 
+        success: false, 
+        message: "Payment record not found" 
+      });
+    }
+
+    console.log("Payment verified and updated:", updatedPayment._id);
+
+    // Here you would typically update your booking status as well
+    // await Booking.findByIdAndUpdate(bookingId, { status: 'confirmed' });
+
+    res.json({ 
+      success: true, 
+      message: "Payment verified successfully",
+      payment: {
+        id: updatedPayment._id,
+        orderId: updatedPayment.orderId,
+        amount: updatedPayment.amount,
+        status: updatedPayment.status
+      }
+    });
+
+  } catch (error) {
+    console.error("Error in verifyPayment:", error);
+    res.status(500).json({ 
+      success: false, 
+      error: error.message || "Payment verification failed" 
+    });
+  }
+};

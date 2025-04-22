@@ -14,68 +14,60 @@ const UserSignUp = () => {
     const [otp, setOtp] = useState('');
     const [isOtpSent, setIsOtpSent] = useState(false);
     const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);           // Signup button loader
+    const [otpLoading, setOtpLoading] = useState(false);     // OTP button loader
     const navigate = useNavigate();
 
-    // Handle input field changes
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: value
-        });
+        setFormData({ ...formData, [name]: value });
     };
 
-    // Handle OTP input
     const handleOtpChange = (e) => {
         setOtp(e.target.value);
     };
 
-    // Handle signup submission
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
+        setLoading(true); // Start loader
 
         try {
-            console.log("Submitting Form Data:", formData);
             const response = await axios.post("https://book-pandit-mmed.vercel.app/api/users/register", formData, {
                 headers: { "Content-Type": "application/json" }
             });
 
-            console.log("Response Data:", response.data);
-
             if (response.data.message === "OTP sent to email") {
                 toast.success("OTP sent to your email! Please verify.");
-                setIsOtpSent(true); // Show OTP input field
+                setIsOtpSent(true);
             } else {
                 setError("Invalid signup response. Please try again.");
                 toast.error("Invalid signup response. Please try again.");
             }
         } catch (error) {
-            console.error("Signup Error:", error);
             setError(error.response?.data?.message || "Signup failed. Please try again.");
             toast.error(error.response?.data?.message || "Signup failed. Please try again.");
+        } finally {
+            setLoading(false); // Stop loader
         }
     };
 
-    // Handle OTP verification
     const handleOtpSubmit = async (e) => {
         e.preventDefault();
+        setOtpLoading(true); // Start loader
 
         try {
-            console.log("Submitting OTP:", otp);
-            const response = await axios.post("https://book-pandit-mmed.vercel.app/api/users/verify-otp", { 
-                email: formData.email, 
-                otp 
+            const response = await axios.post("https://book-pandit-mmed.vercel.app/api/users/verify-otp", {
+                email: formData.email,
+                otp
             });
 
-            console.log("OTP Verification Response:", response.data);
-
-                toast.success("OTP verified! Redirecting to login...");
-
-                navigate('/UserSignin')
+            toast.success("OTP verified! Redirecting to login...");
+            navigate('/UserSignin');
         } catch (error) {
-            console.error("OTP Verification Error:", error);
             toast.error(error.response?.data?.message || "OTP verification failed.");
+        } finally {
+            setOtpLoading(false); // Stop loader
         }
     };
 
@@ -87,8 +79,7 @@ const UserSignUp = () => {
                 </h2>
 
                 {!isOtpSent ? (
-                    // Signup Form
-                    <form onSubmit={((e) => {handleSubmit(e)})} className="space-y-4">
+                    <form onSubmit={handleSubmit} className="space-y-4">
                         <div>
                             <input
                                 type="text"
@@ -122,16 +113,28 @@ const UserSignUp = () => {
                                 className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
                         </div>
-                        <button 
-                            type="submit" 
-                            className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition duration-200"
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className={`w-full text-white py-2 rounded-md transition duration-200 ${
+                                loading ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
+                            }`}
                         >
-                            Sign Up
+                            {loading ? (
+                                <div className="flex justify-center items-center space-x-2">
+                                    <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                                    </svg>
+                                    <span>Signing Up...</span>
+                                </div>
+                            ) : (
+                                "Sign Up"
+                            )}
                         </button>
                     </form>
                 ) : (
-                    // OTP Verification Form
-                    <form onSubmit={(e) => handleOtpSubmit(e)} className="space-y-4">
+                    <form onSubmit={handleOtpSubmit} className="space-y-4">
                         <div>
                             <input
                                 type="text"
@@ -143,11 +146,24 @@ const UserSignUp = () => {
                                 className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
                         </div>
-                        <button 
-                            type="submit" 
-                            className="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 transition duration-200"
+                        <button
+                            type="submit"
+                            disabled={otpLoading}
+                            className={`w-full text-white py-2 rounded-md transition duration-200 ${
+                                otpLoading ? "bg-green-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-700"
+                            }`}
                         >
-                            Verify OTP
+                            {otpLoading ? (
+                                <div className="flex justify-center items-center space-x-2">
+                                    <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                                    </svg>
+                                    <span>Verifying...</span>
+                                </div>
+                            ) : (
+                                "Verify OTP"
+                            )}
                         </button>
                     </form>
                 )}
