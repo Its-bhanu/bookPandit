@@ -12,11 +12,11 @@ const panditRoutes=require('./routes/pandit.routes')
 const poojaRoutes=require("./routes/poojaBooks.routes");
 const ForgetPasswordRoutes=require("./routes/ForgetPass.routes");
 // console.log("heelo")
-app.use(cors(
-    // {
-    //     origin:"https://book-pandit.vercel.app",
-    // }
-));
+app.use(cors({
+    origin: 'https://book-pandit.vercel.app',
+    methods: ['GET', 'POST', 'OPTIONS'],
+    allowedHeaders: ['Content-Type']
+  }));
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.use(cookieparser())
