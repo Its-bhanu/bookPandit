@@ -19,7 +19,7 @@ module.exports.createBooking = async (req, res) => {
         const { panditId, userId } = req.body;
 
         // Validate required fields
-        if (!name || !phoneNo || !poojaType || !date || !time || !address || !panditId || !userId) {
+        if (!name || !phoneNo || !poojaType || !date || !time || !address ) {
             return res.status(400).json({ 
                 success: false,
                 message: "All fields are required" 
@@ -43,8 +43,8 @@ module.exports.createBooking = async (req, res) => {
             date, 
             time, 
             address, 
-            panditId,
-            userId,
+            // panditId,
+            // userId,
             status: 'confirmed'
         });
 
