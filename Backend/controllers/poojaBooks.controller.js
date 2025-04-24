@@ -65,11 +65,19 @@ module.exports.createBooking = async (req, res) => {
             Pandit.findById(panditId)
         ]);
  
+        if (!user.email) {
+            console.warn('No email found for user:', user._id);
+        }
+
+        if (!pandit.email) {
+            console.warn('No email found for pandit:', pandit._id);
+        }
         // Format date and time
         const formattedDate = format(new Date(date), 'PPPP');
         const formattedTime = format(new Date(`1970-01-01T${time}`), 'hh:mm a');
-
+        const emailPromises = [];
         // Email content for user
+        if(user.email){
         const userMailOptions = {
             from: process.env.EMAIL_USER,
             to: user.email,
@@ -89,8 +97,10 @@ module.exports.createBooking = async (req, res) => {
                 <p><strong>Customer Support:</strong> support@bookpandit.com | +91 9876543210</p>
             `
         };
-
+        emailPromises.push(transporter.sendMail(userMailOptions));
+    }
         // Email content for pandit
+        if(pandit.email){
         const panditMailOptions = {
             from: process.env.EMAIL_USER,
             to: pandit.email,
@@ -111,8 +121,10 @@ module.exports.createBooking = async (req, res) => {
                 <p><strong>Support Team</strong><br>BookPandit Services</p>
             `
         };
+        emailPromises.push(transporter.sendMail(panditMailOptions));
+    }
 
-        // Send emails (fire and forget)
+        
         transporter.sendMail(userMailOptions, (error, info) => {
             if (error) {
                 console.error('Error sending user email:', error);
