@@ -1,15 +1,7 @@
 const PoojaBook = require("../models/poojaBooks.model");
 const Pandit = require("../models/pandit.model");
 const User = require("../models/user.model");
-const nodemailer = require("nodemailer");
 
-const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-    }
-});
 
 module.exports.createBooking = async (req, res) => {
     try {
@@ -59,34 +51,11 @@ module.exports.createBooking = async (req, res) => {
         await User.findByIdAndUpdate(userId, {
             $push: { BookingId: newBooking._id }
         });
-
-        const [user, pandit] = await Promise.all([
-            User.findById(userId),
-            Pandit.findById(panditId)
-        ]);
-
-        if (user?.email) {
-            await transporter.sendMail({
-                from: process.env.EMAIL_USER,
-                to: user.email,
-                subject: "Pooja Booking Confirmation",
-                text: `Hello ${user.username},\n\nYour booking for ${poojaType} on ${date} at ${time} has been confirmed.\n\nPandit: ${pandit.username}\nLocation: ${address}\n\nThank you for choosing PanditBook! 🙏`
-            });
-        }
-        if (pandit?.email) {
-            await transporter.sendMail({
-                from: process.env.EMAIL_USER,
-                to: pandit.email,
-                subject: "New Booking Alert",
-                text: `Hello ${pandit.username},\n\nYou have a new pooja booking for ${poojaType} on ${date} at ${time}.\n\nClient: ${user.username}\nPhone: ${phoneNo}\nLocation: ${address}\n\nPlease check your dashboard for more details.`
-            });
-        }
         return res.status(201).json({
             success: true,
             message: "Booking created successfully",
             booking: newBooking
         });
-        
     }
     catch (error) {
         console.error('Error creating booking:', error);
