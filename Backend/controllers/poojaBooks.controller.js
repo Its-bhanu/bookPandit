@@ -43,9 +43,9 @@ module.exports.createBooking = async (req, res) => {
             date, 
             time, 
             address, 
-            // panditId,
-            // userId,
-            status: 'confirmed'
+            panditId,
+            userId,
+           
         });
 
         await newBooking.save();
