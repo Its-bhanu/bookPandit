@@ -120,9 +120,12 @@ const PanditProfilesList = () => {
   // Filter pandits based on search and expertise
   const filteredPandits = pandits.filter(pandit => {
     const matchesSearch = pandit.fullname.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                         pandit.expertise.toLowerCase().includes(searchTerm.toLowerCase());
+                         pandit.expertise.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          pandit.address.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesExpertise = selectedExpertise === "all" || 
                            pandit.expertise.toLowerCase().includes(selectedExpertise.toLowerCase());
+
+                     
     return matchesSearch && matchesExpertise;
   });
 
@@ -164,7 +167,8 @@ const PanditProfilesList = () => {
             transition={{ delay: 0.2, duration: 0.5 }}
             className="text-lg text-gray-600 max-w-2xl mx-auto mb-8"
           >
-            Browse our verified pandits and book for your pooja ceremony
+            Browse our verified pandits and book for your pooja ceremony,
+            <br />" And Here you can find pandits using your location ,expertise and name.."
           </motion.p>
           
           <motion.div 

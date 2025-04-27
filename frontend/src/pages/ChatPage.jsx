@@ -66,11 +66,8 @@ const PanditChat = () => {
     // Simulate pandit response after a delay
     setTimeout(() => {
       const panditResponses = [
-        "According to our scriptures, this is the recommended way to perform the puja...",
-        "The auspicious time for this ritual would be during the early morning hours.",
-        "You should use these items for the puja: flowers, incense, diya, and fruits.",
-        "This mantra from the Vedas would be most appropriate for your situation...",
-        "The significance of this ritual is deeply connected to our ancient traditions...",
+        "That's a great question! Let me think about it.",
+        "Chat with Pandit will be comming Soon.",
       ];
       const randomResponse = panditResponses[Math.floor(Math.random() * panditResponses.length)];
       
