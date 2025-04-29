@@ -29,7 +29,12 @@ const PanditProfilesList = () => {
     const fetchPandits = async () => {
       try {
         const response = await axios.get("https://book-pandit-mmed.vercel.app/api/pandits/AllProfiles");
-        setPandits(response.data);
+        const panditonly=response.data.filter(pandit=>{
+          const expertise = pandit.expertise ?.toLowerCase() || "";
+           return (expertise.includes('pandit')) 
+
+        })
+        setPandits(panditonly);
         toast.success("Pandit profiles loaded successfully!");
       } catch (error) {
         setError("Failed to fetch pandit profiles");

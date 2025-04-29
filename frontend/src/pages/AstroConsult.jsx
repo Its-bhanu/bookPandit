@@ -11,15 +11,30 @@ const AstroConsult = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
+  // List of all expertise to filter
+  const expertiseList = [
+    "astrolog",
+    "astrology",
+    "Vastu Consultant",
+    "Numerologist",
+    "Palmist"
+  ];
+
   useEffect(() => {
     const fetchAstrologers = async () => {
       try {
         setIsLoading(true);
         const response = await axios.get("https://book-pandit-mmed.vercel.app/api/pandits/AllProfiles");
         const dataArray = Array.isArray(response.data) ? response.data : [response.data];
-        const filtered = dataArray.filter((astro) =>
-          astro?.expertise?.toString().toLowerCase().includes("astrolog")
-        );
+        
+        // Filter based on all expertise in the list
+        const filtered = dataArray.filter((astro) => {
+          const astroExpertise = astro?.expertise?.toString().toLowerCase();
+          return expertiseList.some(expertise => 
+            astroExpertise.includes(expertise.toLowerCase())
+          );
+        });
+        
         setAstrologers(filtered);
         if (filtered.length === 0) setMessage("No astrologers found at the moment.");
       } catch (error) {
@@ -114,7 +129,7 @@ const AstroConsult = () => {
                   <div className="space-y-2 text-sm text-gray-600 mb-4">
                     <p><span className="font-medium">Experience:</span> {astro.experience || '5'} years</p>
                     <p><span className="font-medium">Languages:</span> {astro.languages || 'Hindi, English'}</p>
-                    <p><span className="font-medium">Specialty:</span> Vedic, Horoscope, Palmistry</p>
+                    <p><span className="font-medium">Specialty:</span> {astro.expertise || 'Vedic, Horoscope, Palmistry'}</p>
                   </div>
 
                   <button
@@ -129,13 +144,6 @@ const AstroConsult = () => {
           </div>
         )}
       </main>
-
-      {/* Footer */}
-      {/* <footer className="bg-gray-800 text-white py-6 px-4 md:px-12 mt-12">
-        <div className="max-w-6xl mx-auto text-center">
-          <p>© {new Date().getFullYear()} AstroConnect. All rights reserved.</p>
-        </div>
-      </footer> */}
     </div>
   );
 };

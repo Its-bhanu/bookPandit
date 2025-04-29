@@ -39,7 +39,7 @@ const HomePage = () => {
         </motion.h1>
 
         <p className="text-lg text-gray-600 mt-4 max-w-3xl mx-auto">
-          <strong>India’s trusted platform</strong> to connect you with qualified and verified
+          <strong >India’s trusted platform</strong> to connect you with qualified and verified
           Pandits from all communities. Book rituals, seek spiritual guidance, or offer online
           consultations — all at your fingertips.
         </p>
