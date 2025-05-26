@@ -48,7 +48,7 @@ const UserSignUp = () => {
             setError(error.response?.data?.message || "Signup failed. Please try again.");
             toast.error(error.response?.data?.message || "Signup failed. Please try again.");
         } finally {
-            setLoading(false); // Stop loader
+            setLoading(false); 
         }
     };
 

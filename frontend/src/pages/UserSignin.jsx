@@ -10,7 +10,7 @@ const UserSignIn = () => {
     password: "",
   });
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false); // Loader state
+  const [loading, setLoading] = useState(false); 
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -24,7 +24,7 @@ const UserSignIn = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    setLoading(true); // Start loader
+    setLoading(true); 
 
     try {
       const response = await axios.post(
