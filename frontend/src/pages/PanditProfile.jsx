@@ -85,14 +85,19 @@ const PanditProfilesList = () => {
         order_id: id,
         handler: async function (response) {
           try {
-            await axios.post("https://book-pandit-mmed.vercel.app/api/payment/verifyPayment", {
+           const verificationResponse= await axios.post("https://book-pandit-mmed.vercel.app/api/payment/verifyPayment", {
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_order_id: response.razorpay_order_id,
               razorpay_signature: response.razorpay_signature,
               bookingId,
             });
-            toast.success("Payment verified! Pandit successfully booked.");
-            navigate("/feedback");
+
+            if (verificationResponse.data.success) {
+              navigate("/feedback");
+              toast.success("Payment successful! Pandit booked successfully.");
+            } else {
+                toast.error("Payment verification failed. Please contact support.");
+          }
           } catch (error) {
             toast.error(error.response?.data?.message || "Payment verification failed.");
           } finally {

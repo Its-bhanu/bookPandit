@@ -53,7 +53,7 @@ module.exports.verifyPayment = async (req, res) => {
     } = req.body;
 
     // Validate required fields
-    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature || !bookingId) {
       return res.status(400).json({ 
         success: false, 
         message: "Missing payment verification details" 
@@ -71,26 +71,30 @@ module.exports.verifyPayment = async (req, res) => {
       .update(body)
       .digest('hex');
 
+       const isSignatureValid = expectedSignature === razorpay_signature;
+
     console.log("Generated signature:", expectedSignature);
 
     // Verify signature
-    if (expectedSignature !== razorpay_signature) {
-      console.error("Signature mismatch - possible tampering detected");
-      return res.status(400).json({ 
-        success: false, 
-        message: "Invalid payment signature" 
-      });
-    }
+    // if (expectedSignature !== razorpay_signature) {
+    //   console.error("Signature mismatch - possible tampering detected");
+    //   return res.status(400).json({ 
+    //     success: false, 
+    //     message: "Invalid payment signature" 
+    //   });
+    // }
+
+     const updateData = {
+      paymentId: razorpay_payment_id,
+      signature: razorpay_signature,
+      verifiedAt: new Date(),
+      status: isSignatureValid ? 'completed' : 'failed'
+    };
 
     // Update payment status
     const updatedPayment = await Payment.findOneAndUpdate(
       { orderId: razorpay_order_id },
-      { 
-        status: 'completed',
-        paymentId: razorpay_payment_id,
-        signature: razorpay_signature,
-        verifiedAt: new Date() 
-      },
+      updateData,
       { new: true }
     );
 
@@ -101,7 +105,13 @@ module.exports.verifyPayment = async (req, res) => {
         message: "Payment record not found" 
       });
     }
-
+   if (!isSignatureValid) {
+      return res.status(400).json({ 
+        success: false, 
+        message: "Invalid payment signature",
+        payment: updatedPayment
+      });
+    }
     console.log("Payment verified and updated:", updatedPayment._id);
 
     // Here you would typically update your booking status as well
@@ -110,12 +120,7 @@ module.exports.verifyPayment = async (req, res) => {
     res.json({ 
       success: true, 
       message: "Payment verified successfully",
-      payment: {
-        id: updatedPayment._id,
-        orderId: updatedPayment.orderId,
-        amount: updatedPayment.amount,
-        status: updatedPayment.status
-      }
+       payment: updatedPayment
     });
 
   } catch (error) {
