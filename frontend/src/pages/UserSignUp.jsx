@@ -33,7 +33,7 @@ const UserSignUp = () => {
         setLoading(true); // Start loader
 
         try {
-            const response = await axios.post("https://book-pandit-mmed.vercel.app/api/users/register", formData, {
+            const response = await axios.post("https://book-pandit-mmed.vercel.app/users/register", formData, {
                 headers: { "Content-Type": "application/json" }
             });
 

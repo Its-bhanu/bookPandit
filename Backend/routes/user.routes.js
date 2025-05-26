@@ -6,9 +6,6 @@ const authMiddleware=require('../middlewares/auth.middleware')
 const userController=require('../controllers/user.controller');
 
 
-// router.post('/sendOTP',[
-//     body('email').isEmail().withMessage('Invalid Email')
-// ], otpController.generateOTP);
 
 router.post('/register',[    
     body('username').isLength({min:3}).withMessage('Name should be atleast 3 characters long'),

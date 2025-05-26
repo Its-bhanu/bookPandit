@@ -71,14 +71,14 @@ module.exports.registerUser = async (req, res, next) => {
         console.log("OTP email sent successfully");
 
         console.log("Hashing password...");
-        const hashedPassword = await userModel.hashPassword(password);
+        // const hashedPassword = await userModel.hashPassword(password);
 
         console.log("Creating user...");
         // console
         const user = await userService.createUser({
             username,
             email,
-            password: hashedPassword,
+            password,
             otp,
             otpExpires: otpExpires
         });
