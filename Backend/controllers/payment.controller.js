@@ -4,7 +4,6 @@ const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const Booking = require('../models/poojaBooks.model');
 const User = require('../models/user.model');
-const Pandit = require('../models/pandit.model');
 
 // Configure email transporter
 const transporter = nodemailer.createTransport({
@@ -113,7 +112,7 @@ module.exports.verifyPayment = async (req, res) => {
       bookingId,
       { status: 'confirmed', paymentStatus: 'paid' },
       { new: true }
-    ).populate('userId panditId');
+    ).populate('userId');
 
     if (!updatedBooking) {
       console.error("Booking not found:", bookingId);
@@ -123,8 +122,8 @@ module.exports.verifyPayment = async (req, res) => {
       });
     }
 
-    // Send email notifications
-    await sendPaymentConfirmationEmails(updatedBooking, updatedPayment);
+    // Send email notification only to user
+    await sendUserConfirmationEmail(updatedBooking, updatedPayment);
 
     res.json({ 
       success: true, 
@@ -142,69 +141,42 @@ module.exports.verifyPayment = async (req, res) => {
   }
 };
 
-// Helper function to send confirmation emails
-async function sendPaymentConfirmationEmails(booking, payment) {
+// Helper function to send confirmation email to user only
+async function sendUserConfirmationEmail(booking, payment) {
   try {
-    // Get user and pandit details
     const user = await User.findById(booking.userId);
-    const pandit = await Pandit.findById(booking.panditId);
 
-    if (!user || !pandit) {
-      throw new Error('User or Pandit not found');
+    if (!user) {
+      throw new Error('User not found');
     }
 
-    // Email to user
-    const userMailOptions = {
+    const mailOptions = {
       from: process.env.EMAIL_USER,
       to: user.email,
       subject: 'Your Pooja Booking Payment Confirmation',
       html: `
         <h2>Payment Successful!</h2>
         <p>Dear ${user.username},</p>
-        <p>Your payment of ₹${payment.amount} for booking Pandit ${pandit.fullname} has been successfully processed.</p>
+        <p>Your payment of ₹${payment.amount} for your pooja booking has been successfully processed.</p>
         <p><strong>Booking Details:</strong></p>
         <ul>
-          <li>Pandit: ${pandit.fullname}</li>
+          <li>Booking Reference: ${booking._id}</li>
           <li>Booking Date: ${booking.date}</li>
           <li>Pooja Type: ${booking.poojaType}</li>
           <li>Transaction ID: ${payment.paymentId}</li>
         </ul>
-        <p>Pandit ${pandit.fullname} will contact you shortly to confirm the details.</p>
+        <p>Your pandit will contact you shortly to confirm the details.</p>
         <p>Thank you for using our service!</p>
+        <p><strong>Customer Support</strong><br>
+        Email: support@panditbooking.com<br>
+        Phone: +91 1234567890</p>
       `
     };
 
-    // Email to pandit
-    const panditMailOptions = {
-      from: process.env.EMAIL_USER,
-      to: pandit.email,
-      subject: 'New Booking Confirmation',
-      html: `
-        <h2>New Booking Received!</h2>
-        <p>Dear ${pandit.fullname},</p>
-        <p>You have received a new booking from ${user.username}.</p>
-        <p><strong>Booking Details:</strong></p>
-        <ul>
-          <li>User: ${user.username}</li>
-          <li>Booking Date: ${booking.date}</li>
-          <li>Pooja Type: ${booking.poojaType}</li>
-          <li>User Contact: ${user.mobile || 'Not provided'}</li>
-          <li>User Address: ${booking.address}</li>
-        </ul>
-        <p>Please contact the user to confirm the booking details.</p>
-        <p>Thank you for being part of our platform!</p>
-      `
-    };
-
-    // Send both emails in parallel
-    await Promise.all([
-      transporter.sendMail(userMailOptions),
-      transporter.sendMail(panditMailOptions)
-    ]);
-
-    console.log('Confirmation emails sent successfully');
+    await transporter.sendMail(mailOptions);
+    console.log('Confirmation email sent to user successfully');
   } catch (error) {
-    console.error('Error sending confirmation emails:', error);
+    console.error('Error sending confirmation email:', error);
     // Don't throw error as we don't want to fail the payment verification
   }
 }
