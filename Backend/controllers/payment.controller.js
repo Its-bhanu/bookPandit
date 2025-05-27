@@ -1,6 +1,7 @@
 const razorpay=require('../config/razorpay.config');
 const Payment=require('../models/payment.model');
 const crypto=require('crypto');
+
 module.exports.createOrder = async (req, res) => {
   try {
       const {  bookingId } = req.body;
