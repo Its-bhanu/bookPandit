@@ -72,7 +72,7 @@ const PanditProfilesList = () => {
         "https://book-pandit-mmed.vercel.app/api/payment/createOrder", 
         { bookingId, amount: 2100 }
       );
-      navigate("/feedback");
+      // navigate("/feedback");
 
       const { id } = paymentResponse.data;
 
