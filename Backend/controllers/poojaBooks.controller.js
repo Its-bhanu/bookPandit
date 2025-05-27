@@ -17,13 +17,13 @@ module.exports.createBooking = async (req, res) => {
         }
 
         // Check for existing booking
-        const existingBooking = await PoojaBook.findOne({ phoneNo, date }, { _id: 1 }).maxTimeMS(2000);
-        if (existingBooking) {
-            return res.status(400).json({ 
-                success: false,
-                message: "Booking with this phone number already exists for this date" 
-            });
-        }
+        // const existingBooking = await PoojaBook.findOne({ phoneNo, date }, { _id: 1 }).maxTimeMS(2000);
+        // if (existingBooking) {
+        //     return res.status(400).json({ 
+        //         success: false,
+        //         message: "Booking with this phone number already exists for this date" 
+        //     });
+        // }
 
         // Create new booking
         const newBooking = new PoojaBook({
@@ -35,6 +35,7 @@ module.exports.createBooking = async (req, res) => {
             address, 
             panditId,
             userId,
+            status: "Pending" ,
            
         });
 
@@ -43,14 +44,22 @@ module.exports.createBooking = async (req, res) => {
         
         
 
-        // Update pandit and user with booking reference
-        await Pandit.findByIdAndUpdate(panditId, {
-            $push: { BookingId: newBooking._id }
-        });
+        // Update pandit's booking references (if pandit exists)
+        await Pandit.findByIdAndUpdate(
+            panditId,
+            { $push: { BookingId: newBooking._id } },
+            { new: true, upsert: false }
+        ).catch(err => console.log("Pandit update error:", err.message));
 
-        await User.findByIdAndUpdate(userId, {
-            $push: { BookingId: newBooking._id }
-        });
+        // Update user's booking references if userId provided
+       
+            await User.findByIdAndUpdate(
+                userId,
+                { $push: { BookingId: newBooking._id } },
+                { new: true, upsert: false }
+            ).catch(err => console.log("User update error:", err.message));
+        
+
         return res.status(201).json({
             success: true,
             message: "Booking created successfully",
