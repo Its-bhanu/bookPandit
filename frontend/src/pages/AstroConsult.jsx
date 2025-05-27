@@ -117,6 +117,7 @@ const AstroConsult = () => {
                     />
                     <h3 className="text-xl font-semibold mt-3 text-gray-800">{astro.fullname || "Astrologer"}</h3>
                     <p className="text-indigo-600 text-sm">{astro.expertise || "Vedic Astrologer"}</p>
+                    
                   </div>
 
                   <div className="flex justify-center mb-3">

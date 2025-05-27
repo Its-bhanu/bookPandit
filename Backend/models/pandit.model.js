@@ -67,13 +67,10 @@ const panditSchema = new mongoose.Schema({
         type:Date,
     },
     
-    // imageUrl:{
-    //     type:String,
-    //     required:true,
-    // }
+    
     
 });
-// panditSchema.index({location:'2dsphere'});
+
 
 panditSchema.methods.generateAuthToken=function(){
     const token=jwt.sign({_id:this._id},process.env.JWT_SECRET,{expiresIn:'24h'});
