@@ -20,7 +20,7 @@ const PanditProfilesList = () => {
 
   useEffect(() => {
     const script = document.createElement("script");
-    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.src = "https://checkout.razorpay.c om/v1/checkout.js";
     script.async = true;
     document.body.appendChild(script);
   }, []);
