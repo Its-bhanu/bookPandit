@@ -20,9 +20,13 @@ const PanditProfilesList = () => {
 
   useEffect(() => {
     const script = document.createElement("script");
-    script.src = "https://checkout.razorpay.c om/v1/checkout.js";
+script.src = "https://checkout.razorpay.com/v1/checkout.js";
+
     script.async = true;
     document.body.appendChild(script);
+    return () => {
+    document.body.removeChild(script);
+  };
   }, []);
 
   useEffect(() => {
@@ -72,7 +76,7 @@ const PanditProfilesList = () => {
         "https://book-pandit-mmed.vercel.app/api/payment/createOrder", 
         { bookingId, amount: 2100 }
       );
-      // navigate("/feedback");
+      navigate("/feedback");
 
       const { id } = paymentResponse.data;
 
@@ -205,17 +209,6 @@ const PanditProfilesList = () => {
               </svg>
             </div>
             
-            {/* <select
-              className="w-full sm:w-48 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-              value={selectedExpertise}
-              onChange={(e) => setSelectedExpertise(e.target.value)}
-            >
-              <option value="all">Astrologer</option>
-              <option value="marriage">Pandit</option>
-              <option value="griha pravesh">Palmistry</option>
-              <option value="satyanarayan">Black Magic</option>
-              <option value="havan">Vashikaran</option>
-            </select> */}
           </motion.div>
         </div>
 
