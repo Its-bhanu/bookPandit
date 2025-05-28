@@ -6,14 +6,16 @@ module.exports.createOrder = async (req, res) => {
   try {
       const {  bookingId } = req.body;
         const amount = 2100 * 100;
-      //  const amount = req.body.amount; // Use the amount from the request body if provided
-      // Debugging logs
+     
      
       console.log( bookingId);
 
-      if ( !bookingId) {
-          return res.status(400).json({ success: false, message: " Booking ID are required" });
-      }
+       if (!bookingId) {
+      return res.status(400).json({ 
+        success: false, 
+        message: "Booking ID is required" 
+      });
+    }
 
       const options = {
           amount:amount,
