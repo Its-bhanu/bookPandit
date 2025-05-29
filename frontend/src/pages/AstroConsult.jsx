@@ -24,7 +24,7 @@ const AstroConsult = () => {
     const fetchAstrologers = async () => {
       try {
         setIsLoading(true);
-        const response = await axios.get("https://book-pandit-mmed.vercel.app/api/pandits/AllProfiles");
+        const response = await axios.get(" http://localhost:5173/api/pandits/AllProfiles");
         const dataArray = Array.isArray(response.data) ? response.data : [response.data];
         
         // Filter based on all expertise in the list

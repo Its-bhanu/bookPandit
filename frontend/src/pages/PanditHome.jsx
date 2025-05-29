@@ -23,7 +23,7 @@ const PanditHomePage = () => {
     const fetchUsers = async () => {
       try {
         const response = await axios.get(
-          `https://book-pandit-mmed.vercel.app/api/pandits/user/token?token=${token}`
+          ` http://localhost:5173/api/pandits/user/token?token=${token}`
         );
         setUsers(response.data?.data || []);
       } catch (error) {
@@ -37,7 +37,7 @@ const PanditHomePage = () => {
   const handleDeleteBooking = async (bookingId) => {
     try {
       await axios.delete(
-        `https://book-pandit-mmed.vercel.app/api/pandits/poojaBooks/${bookingId}`
+        ` http://localhost:5173/api/pandits/poojaBooks/${bookingId}`
       );
       setUsers((prev) => prev.filter((user) => user._id !== bookingId));
       alert("Booking deleted successfully");
