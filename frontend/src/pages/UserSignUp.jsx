@@ -33,7 +33,7 @@ const UserSignUp = () => {
         setLoading(true); // Start loader
 
         try {
-            const response = await axios.post(" http://localhost:5173/api/users/register", formData, {
+            const response = await axios.post(" https://book-pandit-mmed.vercel.app/api/users/register", formData, {
                 headers: { "Content-Type": "application/json" }
             });
 
@@ -57,7 +57,7 @@ const UserSignUp = () => {
         setOtpLoading(true); // Start loader
 
         try {
-            const response = await axios.post(" http://localhost:5173/api/users/verify-otp", {
+            const response = await axios.post(" https://book-pandit-mmed.vercel.app/api/users/verify-otp", {
                 email: formData.email,
                 otp
             });

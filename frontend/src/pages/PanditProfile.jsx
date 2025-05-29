@@ -32,7 +32,7 @@ script.src = "https://checkout.razorpay.com/v1/checkout.js";
   useEffect(() => {
     const fetchPandits = async () => {
       try {
-        const response = await axios.get(" http://localhost:5173/api/pandits/AllProfiles");
+        const response = await axios.get(" https://book-pandit-mmed.vercel.app/api/pandits/AllProfiles");
         const panditonly=response.data.filter(pandit=>{
           const expertise = pandit.expertise ?.toLowerCase() || "";
            return (expertise.includes('pandit')) 
@@ -56,7 +56,7 @@ script.src = "https://checkout.razorpay.com/v1/checkout.js";
     setProcessingPanditId(panditId);
     try {
       const bookingResponse = await axios.post(
-        " http://localhost:5173/api/booking/poojaBooks", 
+        " https://book-pandit-mmed.vercel.app/api/booking/poojaBooks", 
         { formData, panditId }
       );
       const bookingId = bookingResponse.data.booking._id;
@@ -73,7 +73,7 @@ script.src = "https://checkout.razorpay.com/v1/checkout.js";
   const handlePayment = async (bookingId) => {
     try {
       const paymentResponse = await axios.post(
-        " http://localhost:5173/api/payment/createOrder", 
+        " https://book-pandit-mmed.vercel.app/api/payment/createOrder", 
         { bookingId, amount: 2100 }
       );
       navigate("/feedback");
@@ -89,7 +89,7 @@ script.src = "https://checkout.razorpay.com/v1/checkout.js";
         order_id: id,
         handler: async function (response) {
           try {
-           const verificationResponse= await axios.post(" http://localhost:5173/api/payment/verifyPayment", {
+           const verificationResponse= await axios.post(" https://book-pandit-mmed.vercel.app/api/payment/verifyPayment", {
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_order_id: response.razorpay_order_id,
               razorpay_signature: response.razorpay_signature,

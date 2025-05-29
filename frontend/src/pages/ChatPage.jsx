@@ -27,7 +27,7 @@ const PanditChat = () => {
     const fetchPanditDetails = async () => {
       try {
         // Replace with your actual API endpoint
-        const response = await fetch(` http://localhost:5173/api/pandits/${panditId}`);
+        const response = await fetch(` https://book-pandit-mmed.vercel.app/api/pandits/${panditId}`);
         const data = await response.json();
         if (data.fullname) {
           setPanditName(data.fullname);

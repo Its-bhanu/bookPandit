@@ -34,7 +34,7 @@ const PanditSignup = () => {
     setLoadingSignup(true);
     try {
       const response = await axios.post(
-        " http://localhost:5173/api/pandits/register",
+        " https://book-pandit-mmed.vercel.app/api/pandits/register",
         formData
       );
       setUserId(response.data.userId);
@@ -51,7 +51,7 @@ const PanditSignup = () => {
     e.preventDefault();
     setLoadingOtp(true);
     try {
-      await axios.post(" http://localhost:5173/api/pandits/verify-otp", {
+      await axios.post(" https://book-pandit-mmed.vercel.app/api/pandits/verify-otp", {
         userId,
         otp,
       });
