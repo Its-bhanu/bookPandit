@@ -13,6 +13,7 @@ const PanditProfilesList = () => {
   const [processingPanditId, setProcessingPanditId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedExpertise, setSelectedExpertise] = useState("all");
+  const [razorpayLoaded, setRazorpayLoaded] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -20,24 +21,33 @@ const PanditProfilesList = () => {
 
   useEffect(() => {
     const script = document.createElement("script");
-script.src = "https://checkout.razorpay.com/v1/checkout.js";
-
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
     script.async = true;
+    
+    script.onload = () => {
+      setRazorpayLoaded(true);
+    };
+    
+    script.onerror = () => {
+      console.error('Failed to load Razorpay script');
+      toast.error('Payment system failed to load. Please refresh the page.');
+    };
+    
     document.body.appendChild(script);
+    
     return () => {
-    document.body.removeChild(script);
-  };
+      document.body.removeChild(script);
+    };
   }, []);
 
   useEffect(() => {
     const fetchPandits = async () => {
       try {
-        const response = await axios.get(" https://book-pandit-mmed.vercel.app/api/pandits/AllProfiles");
-        const panditonly=response.data.filter(pandit=>{
-          const expertise = pandit.expertise ?.toLowerCase() || "";
-           return (expertise.includes('pandit')) 
-
-        })
+        const response = await axios.get("https://book-pandit-mmed.vercel.app/api/pandits/AllProfiles");
+        const panditonly = response.data.filter(pandit => {
+          const expertise = pandit.expertise?.toLowerCase() || "";
+          return (expertise.includes('pandit')) 
+        });
         setPandits(panditonly);
         toast.success("Pandit profiles loaded successfully!");
       } catch (error) {
@@ -52,11 +62,16 @@ script.src = "https://checkout.razorpay.com/v1/checkout.js";
   }, []);
 
   const handleBooking = async (panditId) => {
+    if (!razorpayLoaded) {
+      toast.error("Payment system is still loading. Please wait a moment.");
+      return;
+    }
+
     setProcessingPayment(true);
     setProcessingPanditId(panditId);
     try {
       const bookingResponse = await axios.post(
-        " https://book-pandit-mmed.vercel.app/api/booking/poojaBooks", 
+        "https://book-pandit-mmed.vercel.app/api/booking/poojaBooks", 
         { formData, panditId }
       );
       const bookingId = bookingResponse.data.booking._id;
@@ -73,10 +88,9 @@ script.src = "https://checkout.razorpay.com/v1/checkout.js";
   const handlePayment = async (bookingId) => {
     try {
       const paymentResponse = await axios.post(
-        " https://book-pandit-mmed.vercel.app/api/payment/createOrder", 
+        "https://book-pandit-mmed.vercel.app/api/payment/createOrder", 
         { bookingId, amount: 2100 }
       );
-      navigate("/feedback");
 
       const { id } = paymentResponse.data;
 
@@ -89,20 +103,24 @@ script.src = "https://checkout.razorpay.com/v1/checkout.js";
         order_id: id,
         handler: async function (response) {
           try {
-           const verificationResponse= await axios.post(" https://book-pandit-mmed.vercel.app/api/payment/verifyPayment", {
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_signature: response.razorpay_signature,
-              bookingId,
-            });
+            const verificationResponse = await axios.post(
+              "https://book-pandit-mmed.vercel.app/api/payment/verifyPayment", 
+              {
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_signature: response.razorpay_signature,
+                bookingId,
+              }
+            );
 
-            if (verificationResponse.data.success) {
+            if (verificationResponse.data?.success) {
               navigate("/feedback");
               toast.success("Payment successful! Pandit booked successfully.");
             } else {
-                toast.error("Payment verification failed. Please contact support.");
-          }
+              toast.error(verificationResponse.data?.message || "Payment verification failed. Please contact support.");
+            }
           } catch (error) {
+            console.error('Verification error:', error);
             toast.error(error.response?.data?.message || "Payment verification failed.");
           } finally {
             setProcessingPayment(false);
@@ -118,14 +136,16 @@ script.src = "https://checkout.razorpay.com/v1/checkout.js";
       };
       
       const rzp1 = new window.Razorpay(options);
+      
       rzp1.on('payment.failed', function (response) {
         toast.error(`Payment failed: ${response.error.description}`);
         setProcessingPayment(false);
         setProcessingPanditId(null);
       });
+      
       rzp1.open();
     } catch (error) {
-      toast.error("Error processing booking and payment");
+      toast.error(error.message || "Error processing booking and payment");
       setProcessingPayment(false);
       setProcessingPanditId(null);
     }
@@ -135,10 +155,9 @@ script.src = "https://checkout.razorpay.com/v1/checkout.js";
   const filteredPandits = pandits.filter(pandit => {
     const matchesSearch = pandit.fullname.toLowerCase().includes(searchTerm.toLowerCase()) || 
                          pandit.expertise.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          pandit.address.toLowerCase().includes(searchTerm.toLowerCase());
+                         pandit.address.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesExpertise = selectedExpertise === "all" || 
                            pandit.expertise.toLowerCase().includes(selectedExpertise.toLowerCase());
-
                      
     return matchesSearch && matchesExpertise;
   });
@@ -286,9 +305,9 @@ script.src = "https://checkout.razorpay.com/v1/checkout.js";
                     
                     <button
                       onClick={() => handleBooking(pandit._id)}
-                      disabled={processingPayment && processingPanditId === pandit._id}
+                      disabled={processingPayment && processingPanditId === pandit._id || !razorpayLoaded}
                       className={`w-full py-3 rounded-lg font-medium flex items-center justify-center transition-colors duration-300 ${
-                        processingPayment && processingPanditId === pandit._id
+                        (processingPayment && processingPanditId === pandit._id) || !razorpayLoaded
                           ? 'bg-gray-400 cursor-not-allowed'
                           : 'bg-green-600 hover:bg-green-700 text-white shadow-md hover:shadow-lg'
                       }`}
