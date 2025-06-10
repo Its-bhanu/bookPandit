@@ -5,7 +5,7 @@ const crypto=require('crypto');
 module.exports.createOrder = async (req, res) => {
   try {
       const {  bookingId } = req.body;
-        const amount = 2100 * 100;
+        const amount = 2100;
      
      
       console.log( bookingId);

@@ -6,36 +6,24 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
 const PanditProfilesList = () => {
-  const [pandits, setPandits] = useState([]);
+   const [pandits, setPandits] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [processingPayment, setProcessingPayment] = useState(false);
   const [processingPanditId, setProcessingPanditId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedExpertise, setSelectedExpertise] = useState("all");
- const [razorpayLoaded, setRazorpayLoaded] = useState(false);
+
   const navigate = useNavigate();
   const location = useLocation();
   const formData = location.state?.formData || {};
 
   useEffect(() => {
     const script = document.createElement("script");
-script.src = "https://checkout.razorpay.com/v1/checkout.js";
-
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
     script.async = true;
-    script.onload = () => {
-      setRazorpayLoaded(true);
-      console.log("Razorpay script loaded successfully");
-    };
-    script.onerror = () => {
-      console.error("Failed to load Razorpay script");
-      toast.error("Payment system failed to load. Please refresh the page.");
-    };
-
+    script.onload = () => console.log("Razorpay script loaded.");
     document.body.appendChild(script);
-    return () => {
-    document.body.removeChild(script);
-  };
   }, []);
 
   useEffect(() => {
@@ -60,69 +48,38 @@ script.src = "https://checkout.razorpay.com/v1/checkout.js";
     fetchPandits();
   }, []);
 
-  const handleBooking = async (panditId) => {
-     if (!razorpayLoaded) {
-      toast.error("Payment system is still loading. Please wait...");
-      return;
-    }
-
-    if (!formData || !panditId) {
-      toast.error("Missing required booking information");
-      return;
-    }
+   const handleBooking = async (panditId) => {
     setProcessingPayment(true);
     setProcessingPanditId(panditId);
     try {
       const bookingResponse = await axios.post(
-        " https://book-pandit-mmed.vercel.app/api/booking/poojaBooks", 
-        { formData, panditId },{
-          headers: {
-            "Content-Type": "application/json",
-          }
-        }
+        "https://book-pandit-mmed.vercel.app/api/booking/poojaBooks", 
+        { formData, panditId }
       );
-       console.log("Booking response:", bookingResponse.data);
       const bookingId = bookingResponse.data.booking._id;
       toast.success("Pooja booking created successfully!");
-      await handlePayment(bookingId);
+      handlePayment(bookingId);
     } catch (error) {
       console.error('Error during booking:', error.response ? error.response.data : error.message);
       toast.error(error.response?.data?.message || "Error processing booking");
       setProcessingPayment(false);
       setProcessingPanditId(null);
     }
-    finally {
-      if (!processingPayment) {
-        setProcessingPayment(false);
-        setProcessingPanditId(null);
-      }
-    }
   };
-
-  const handlePayment = async (bookingId) => {
+   const handlePayment = async (bookingId) => {
     try {
       const paymentResponse = await axios.post(
-        " https://book-pandit-mmed.vercel.app/api/payment/createOrder", 
-        { bookingId},{
-          headers: {
-            "Content-Type": "application/json",
-             "Accept": "application/json"
-            
-          }
-        }
+        "https://book-pandit-mmed.vercel.app/api/payment/createOrder", 
+        { bookingId, amount: 2100 }
       );
-        console.log("Payment order response:", paymentResponse.data);
-      
-      if (!paymentResponse.data.order?.id) {
-        throw new Error("Invalid order response from server");
-      }
       // navigate("/feedback");
 
       const { id } = paymentResponse.data;
+      console.log(paymentResponse.data);
 
       const options = {
-        key: "rzp_test_2f29o3Omes0sJq",
-        amount: 2100*100, // Amount in paise
+        key: "rzp_test_35KFJrJBiuoMh3",
+        amount: 2100,
         currency: "INR",
         name: "Pandit Booking",
         description: "Book a Pandit for your ceremony",
@@ -167,17 +124,7 @@ script.src = "https://checkout.razorpay.com/v1/checkout.js";
       });
       rzp1.open();
     } catch (error) {
-      console.error("Payment error:", {
-        message: error.message,
-        response: error.response?.data,
-        stack: error.stack
-      });
-      
-      toast.error(
-        error.response?.data?.error?.details || 
-        error.response?.data?.error ||
-        "Payment processing failed"
-      );
+      toast.error("Error processing booking and payment");
       setProcessingPayment(false);
       setProcessingPanditId(null);
     }
