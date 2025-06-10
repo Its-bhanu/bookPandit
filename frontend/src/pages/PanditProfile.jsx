@@ -13,18 +13,24 @@ const PanditProfilesList = () => {
   const [processingPanditId, setProcessingPanditId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedExpertise, setSelectedExpertise] = useState("all");
-
+const [razorpayLoaded, setRazorpayLoaded] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const formData = location.state?.formData || {};
 
-  useEffect(() => {
-    const script = document.createElement("script");
-    script.src = "https://checkout.razorpay.com/v1/checkout.js";
-    script.async = true;
-    script.onload = () => console.log("Razorpay script loaded.");
-    document.body.appendChild(script);
-  }, []);
+ useEffect(() => {
+  if (window.Razorpay) {
+    setRazorpayLoaded(true);
+    return;
+  }
+
+  const script = document.createElement("script");
+  script.src = "https://checkout.razorpay.com/v1/checkout.js";
+  script.async = true;
+  script.onload = () => setRazorpayLoaded(true);
+  script.onerror = () => toast.error("Failed to load payment system");
+  document.body.appendChild(script);
+}, []);
 
   useEffect(() => {
     const fetchPandits = async () => {
@@ -73,6 +79,11 @@ const PanditProfilesList = () => {
         { bookingId, amount: 2100 }
       );
       // navigate("/feedback");
+      if (!paymentResponse.data.order?.id) {
+      throw new Error("Invalid order response");
+    }
+
+      
 
       const { id } = paymentResponse.data;
       console.log(paymentResponse.data);

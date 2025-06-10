@@ -4,9 +4,13 @@ const crypto=require('crypto');
 
 module.exports.createOrder = async (req, res) => {
   try {
-      const {  bookingId } = req.body;
-        const amount = 2100;
-     
+      const {  bookingId ,amount} = req.body;
+        // const amount = 2100;
+     if (!bookingId || !amount) {
+      return res.status(400).json({ 
+        error: "Booking ID and amount are required" 
+      });
+    }
      
       console.log( bookingId);
 
