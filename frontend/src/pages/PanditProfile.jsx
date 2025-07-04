@@ -106,6 +106,13 @@ const [razorpayLoaded, setRazorpayLoaded] = useState(false);
         name: "Pandit Booking",
         description: "Book a Pandit for your ceremony",
         order_id: id,
+        method:{
+          netbanking: true,
+          card: true,
+          wallet: true,
+          upi: true,
+          emi: true,
+        },
         handler: async function (response) {
           try {
            const verificationResponse= await axios.post("https://book-pandit-mmed.vercel.app/api/payment/verifyPayment", {
