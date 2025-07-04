@@ -43,7 +43,8 @@ const poojaBookSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        default: 'pending'
+        default: 'pending',
+         enum: ['pending', 'confirmed', 'cancelled'],
     },
 });
 

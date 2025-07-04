@@ -231,6 +231,9 @@ const PanditHomePage = () => {
                 <p className="text-gray-600">Location: {user.address}</p>
                 <p className="text-gray-600">Time: {user.time}</p>
                 <p className="text-gray-600">Phone No: {user.phoneNo}</p>
+                {/* <p className="text-gray-600">Email: {user.email}</p> */}
+                <p className="text-gray-600">BookingStatus: {user.status}</p>
+                
 
                 <button
                   className="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
@@ -304,7 +307,7 @@ const PanditHomePage = () => {
       <section className="py-12 text-center">
         <h3 className="text-3xl font-bold text-gray-800 mb-2">📞 Contact Us</h3>
         <p className="text-gray-600">Need help? Call us at <span className="font-semibold text-blue-600">+91 8854072557</span></p>
-        <p className="text-gray-600">Email: <span className="font-semibold text-blue-600">support@panditbooking.com</span></p>
+        <p className="text-gray-600">Email: <span className="font-semibold text-blue-600">bhanu772899sharma@gmail.com</span></p>
       </section>
     </div>
   );

@@ -85,6 +85,9 @@ const PoojaBooks = () => {
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
         <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Book a Pooja</h2>
         <form onSubmit={handleSubmit}>
+          <label className="block mb-1 text-sm font-medium text-gray-700">
+  Full Name
+</label>
           <input
             type="text"
             name="name"
@@ -94,6 +97,9 @@ const PoojaBooks = () => {
             required
             className="w-full p-2 mb-4 border rounded-lg"
           />
+          <label className="block mb-1 text-sm font-medium text-gray-700">
+  Phone Number
+</label>
           <input
             type="tel"
             name="phoneNo"
@@ -103,6 +109,9 @@ const PoojaBooks = () => {
             required
             className="w-full p-2 mb-4 border rounded-lg"
           />
+          <label className="block mb-1 text-sm font-medium text-gray-700">
+  Select Pooja Type
+</label>
           <select
             name="poojaType"
             value={formData.poojaType}
@@ -115,28 +124,59 @@ const PoojaBooks = () => {
             <option value="Satyanarayan Pooja">Satyanarayan Pooja</option>
             <option value="Marriage Pooja">Marriage Pooja</option>
             <option value="Havan">Havan</option>
+            <option value="sundarkand">Hanuman Sundarkand </option>
+            <option value="ramayan">Ramayan Paath</option>
+            <option value="Sandhya Vandanam ">Sandhya Vandanam </option>
+            <option value="Navagraha Pooja">Navagraha Pooja</option>
+            <option value="Vastu Shanti Pooja">Vastu Shanti Pooja</option>
+            <option value="Maha Mrityunjaya Pooja">Maha Mrityunjaya Pooja</option>
+            <option value="Chandi Havan">Chandi Havan</option>
+            <option value="Navaratri Pooja">Navaratri Pooja</option>
+            <option value="Shree Yantra Pooja">Shree Yantra Pooja</option>
+            <option value="Katha">Katha</option>
+            <option value="Pitra Dosh Pooja">Pitra Dosh Pooja</option>
+            <option value="Kaal Sarp Dosh Pooja">Kaal Sarp Dosh Pooja</option>
+            <option value="Rudrabhishek">Rudrabhishek</option>
+            <option value="Shanti Pooja">Shanti Pooja</option>
+            <option value="Ganesh Pooja">Ganesh Pooja</option>
+            <option value="Navchandi Pooja">Navchandi Pooja</option>
+            <option value="Durga Saptashati">Durga Saptashati</option>
+            <option value="Laxmi Pooja">Laxmi Pooja</option>
+             <option value="Diwali Pooja">Diwali Pooja</option>
+            
+            <option value="Other">Other</option>
           </select>
-          <input
-            type="date"
-            name="date"
-            min={minDate}
-            value={formData.date}
-            onChange={handleChange}
-            required
-            className="w-full p-2 mb-4 border rounded-lg"
-          />
-          <input
-            type="time"
-            name="time"
-            min={formData.date === minDate ? minTime : undefined}
-            value={formData.time}
-            onChange={handleChange}
-            required
-            className="w-full p-2 mb-4 border rounded-lg"
-          />
+          <label className="block mb-1 text-sm font-medium text-gray-700">
+  Pooja Date
+</label>
+<input
+  type="date"
+  name="date"
+  min={minDate}
+  value={formData.date}
+  onChange={handleChange}
+  required
+  className="w-full p-2 mb-4 border rounded-lg"
+/>
+
+<label className="block mb-1 text-sm font-medium text-gray-700">
+  Pooja Time
+</label>
+<input
+  type="time"
+  name="time"
+  min={formData.date === minDate ? minTime : undefined}
+  value={formData.time}
+  onChange={handleChange}
+  required
+  className="w-full p-2 mb-4 border rounded-lg"
+/>
+<label className="block mb-1 text-sm font-medium text-gray-700">
+ Full Address
+</label>
           <textarea
             name="address"
-            placeholder="Enter Address"
+            placeholder="Enter Full Address with your house number, street, city, and state"
             value={formData.address}
             onChange={handleChange}
             required
