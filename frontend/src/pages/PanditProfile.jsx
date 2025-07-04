@@ -35,7 +35,7 @@ const [razorpayLoaded, setRazorpayLoaded] = useState(false);
   useEffect(() => {
     const fetchPandits = async () => {
       try {
-        const response = await axios.get(" https://book-pandit-mmed.vercel.app/api/pandits/AllProfiles");
+        const response = await axios.get("https://book-pandit-mmed.vercel.app/api/pandits/AllProfiles");
         const panditonly=response.data.filter(pandit=>{
           const expertise = pandit.expertise ?.toLowerCase() || "";
            return (expertise.includes('pandit')) 
@@ -74,9 +74,10 @@ const [razorpayLoaded, setRazorpayLoaded] = useState(false);
   };
    const handlePayment = async (bookingId) => {
     try {
+      const bookingId = bookingResponse.data.booking._id;
       const paymentResponse = await axios.post(
         "https://book-pandit-mmed.vercel.app/api/payment/createOrder", 
-        { bookingId, amount: 2100 }
+        { bookingId, amount:2100 }
       );
       // navigate("/feedback");
       if (!paymentResponse.data.order?.id) {
@@ -85,19 +86,20 @@ const [razorpayLoaded, setRazorpayLoaded] = useState(false);
 
       
 
-      const { id } = paymentResponse.data;
+      const { id , amount:amt} = paymentResponse.data.order;
+       if (!id) throw new Error("Invalid order response");
       console.log(paymentResponse.data);
 
       const options = {
         key: "rzp_test_35KFJrJBiuoMh3",
-        amount: 2100,
+        amount,
         currency: "INR",
         name: "Pandit Booking",
         description: "Book a Pandit for your ceremony",
         order_id: id,
         handler: async function (response) {
           try {
-           const verificationResponse= await axios.post(" https://book-pandit-mmed.vercel.app/api/payment/verifyPayment", {
+           const verificationResponse= await axios.post("https://book-pandit-mmed.vercel.app/api/payment/verifyPayment", {
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_order_id: response.razorpay_order_id,
               razorpay_signature: response.razorpay_signature,

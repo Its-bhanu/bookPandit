@@ -47,8 +47,9 @@ const paymentSchema = new mongoose.Schema({
         type: String,
         enum: ['card', 'netbanking', 'wallet', 'upi', 'emi', null]
       },
+       verifiedAt: { type: Date },
 
-}, 
+}, { timestamps: true }
 );
 
 const Payment = mongoose.model('Payment', paymentSchema);
