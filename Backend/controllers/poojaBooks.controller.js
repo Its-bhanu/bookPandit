@@ -3,8 +3,9 @@ const Pandit = require("../models/pandit.model");
 const User = require("../models/user.model");
 const nodemailer = require("nodemailer");
 
-// Email function for pandit
-const sendPanditEmail = async (panditEmail, panditName, userName, poojaType, date, time, address) => {
+ const logoUrl="https://cdni.iconscout.com/illustration/premium/thumb/male-pandit-showing-mobile-2775575-2319298.png";
+const sendPanditEmail = async (panditEmail, 
+fullname, userName, poojaType, date, time, address) => {
     try {
         const transporter = nodemailer.createTransport({
             service: 'gmail',
@@ -18,7 +19,71 @@ const sendPanditEmail = async (panditEmail, panditName, userName, poojaType, dat
             from: process.env.EMAIL_USER,
             to: panditEmail,
             subject: 'New Pooja Booking Assigned',
-            text: `Dear ${panditName},\n\nYou have a new pooja booking:\n\nBooked By: ${userName}\nPooja Type: ${poojaType}\nDate: ${date}\nTime: ${time}\nAddress: ${address}\n\nPlease be prepared.\n\nThank you.`
+            html: ` <html>
+  <head>
+    <style>
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f9f9f9;
+        padding: 20px;
+        color: #333;
+      }
+      .container {
+        max-width: 600px;
+        margin: auto;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        padding: 30px;
+      }
+      .header {
+        text-align: center;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 20px;
+      }
+      .logo {
+        max-width: 120px;
+        margin-bottom: 10px;
+      }
+      .content {
+        padding: 20px 0;
+      }
+      .detail {
+        margin-bottom: 10px;
+        font-size: 16px;
+      }
+      .footer {
+        text-align: center;
+        font-size: 13px;
+        color: #888;
+        margin-top: 30px;
+        border-top: 1px solid #eee;
+        padding-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <img src="${logoUrl}" alt="Panditbook Logo" class="logo" />
+        <h2>Pooja Booking Confirmation</h2>
+      </div>
+
+      <div class="content">
+        <p>Dear <strong>${fullname}</strong>,</p>
+        <p>You have a new pooja booking. Please find the details below:</p>
+
+        <div class="detail"><strong>Booked By:</strong> ${userName}</div>
+        <div class="detail"><strong>Pooja Type:</strong> ${poojaType}</div>
+        <div class="detail"><strong>Date:</strong> ${date}</div>
+        <div class="detail"><strong>Time:</strong> ${time}</div>
+        <div class="detail"><strong>Address:</strong> ${address}</div>
+
+        <p style="margin-top: 20px;">Please be prepared and reach the venue on time.</p>
+        <p>Thank you 🙏</p>
+      </div></div>
+  </body>
+  </html>`
         };
 
         await transporter.sendMail(mailOptions);
