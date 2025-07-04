@@ -27,7 +27,10 @@ const [razorpayLoaded, setRazorpayLoaded] = useState(false);
   const script = document.createElement("script");
   script.src = "https://checkout.razorpay.com/v1/checkout.js";
   script.async = true;
-  script.onload = () => setRazorpayLoaded(true);
+  script.onload = () => {
+      setRazorpayLoaded(true);
+      toast.success("Payment system loaded successfully");
+    };
   script.onerror = () => toast.error("Failed to load payment system");
   document.body.appendChild(script);
 }, []);
@@ -55,6 +58,11 @@ const [razorpayLoaded, setRazorpayLoaded] = useState(false);
   }, []);
 
    const handleBooking = async (panditId) => {
+     if (!razorpayLoaded) {
+      toast.error("Payment system is still loading. Please wait...");
+      return;
+    }
+
     setProcessingPayment(true);
     setProcessingPanditId(panditId);
     try {
@@ -63,8 +71,8 @@ const [razorpayLoaded, setRazorpayLoaded] = useState(false);
         { formData, panditId }
       );
       const bookingId = bookingResponse.data.booking._id;
-      toast.success("Pooja booking created successfully!");
-      handlePayment(bookingId);
+      // toast.success("Pooja booking created successfully!");
+      await handlePayment(bookingId);
     } catch (error) {
       console.error('Error during booking:', error.response ? error.response.data : error.message);
       toast.error(error.response?.data?.message || "Error processing booking");
@@ -74,10 +82,11 @@ const [razorpayLoaded, setRazorpayLoaded] = useState(false);
   };
    const handlePayment = async (bookingId) => {
     try {
-      const bookingId = bookingResponse.data.booking._id;
+      const amount =2100;
+      
       const paymentResponse = await axios.post(
         "https://book-pandit-mmed.vercel.app/api/payment/createOrder", 
-        { bookingId, amount:2100 }
+        { bookingId, amount }
       );
       // navigate("/feedback");
       if (!paymentResponse.data.order?.id) {
@@ -86,13 +95,13 @@ const [razorpayLoaded, setRazorpayLoaded] = useState(false);
 
       
 
-      const { id , amount:amt} = paymentResponse.data.order;
+      const { id , amount:orderAmount} = paymentResponse.data.order;
        if (!id) throw new Error("Invalid order response");
       console.log(paymentResponse.data);
 
       const options = {
         key: "rzp_test_35KFJrJBiuoMh3",
-        amount,
+        amount:orderAmount,
         currency: "INR",
         name: "Pandit Booking",
         description: "Book a Pandit for your ceremony",
@@ -124,6 +133,9 @@ const [razorpayLoaded, setRazorpayLoaded] = useState(false);
           name: formData.name || "",
           email: formData.email || "",
           contact: formData.phoneNo || "",
+        },
+        notes: {
+          bookingId: bookingId
         },
         theme: { color: "#3399cc" },
       };

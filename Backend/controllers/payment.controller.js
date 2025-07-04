@@ -1,10 +1,11 @@
 const razorpay=require('../config/razorpay.config');
 const Payment=require('../models/payment.model');
+const Booking = require('../models/poojaBooks.model');
 const crypto=require('crypto');
 
 module.exports.createOrder = async (req, res) => {
   try {
-      const {  bookingId ,amount} = req.body;
+      const {bookingId ,amount} = req.body;
     
      if (!bookingId || !amount) {
       return res.status(400).json({ 
@@ -24,7 +25,10 @@ module.exports.createOrder = async (req, res) => {
       const options = {
           amount: amount,
           currency: 'INR',
-          receipt: `receipt_order_${bookingId}`
+          receipt: `receipt_order_${bookingId}`,
+          notes:{
+            bookingId: bookingId
+          }
       };
 
       // console.log("Creating Razorpay order with options:", options);
@@ -34,7 +38,7 @@ module.exports.createOrder = async (req, res) => {
 
       const newPayment = new Payment({
           orderId: order.id,
-          amount: amount/100,
+          amount: order.amount/100,
           bookingId: bookingId,
           status: 'pending',
       });
@@ -66,11 +70,7 @@ module.exports.verifyPayment = async (req, res) => {
       });
     }
 
-    // console.log("Verifying payment for order:", razorpay_order_id);
-    // console.log("Payment ID:", razorpay_payment_id);
-    // console.log("Received signature:", razorpay_signature);
-
-    // Generate expected signature
+   
     const expectedSignature  = crypto
       .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
       .update(razorpay_order_id + "|" + razorpay_payment_id)
@@ -110,11 +110,13 @@ module.exports.verifyPayment = async (req, res) => {
         payment: updatedPayment
       });
     }
-    console.log("Payment verified and updated:", updatedPayment._id);
-
-    // Here you would typically update your booking status as well
-    // await Booking.findByIdAndUpdate(bookingId, { status: 'confirmed' });
-
+     if (bookingId) {
+      await Booking.findByIdAndUpdate(
+        bookingId, 
+        { status: 'confirmed', paymentStatus: 'completed' },
+        { new: true }
+      );
+    }
     res.json({ 
       success: true, 
       message: "Payment verified successfully",
