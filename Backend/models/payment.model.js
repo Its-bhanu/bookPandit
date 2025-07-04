@@ -3,7 +3,9 @@ const mongoose = require('mongoose');
 const paymentSchema = new mongoose.Schema({
     paymentId: {
         type: String,
-        
+        required: false,
+        default: null,
+        unique: false
     },
     orderId: {
         type: String,
