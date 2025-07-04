@@ -48,8 +48,19 @@ module.exports.createOrder = async (req, res) => {
 
       res.json({ success: true, order });
   } catch (err) {
-      console.error("Error creating Razorpay order:", err);
-      res.status(500).json({ success: false, error: err.message });
+    console.error("Error creating order:", {
+      message: err.message,
+      stack: err.stack,
+      code: err.code
+    });
+    
+    res.status(500).json({ 
+      success: false, 
+      error: err.message || "Failed to create order",
+      details: err.code === 11000 
+        ? "Duplicate payment detected (database constraint)" 
+        : undefined
+    });
   }
 };
 
