@@ -4,7 +4,7 @@ const User = require("../models/user.model");
 const nodemailer = require("nodemailer");
 
  const logoUrl="https://cdni.iconscout.com/illustration/premium/thumb/male-pandit-showing-mobile-2775575-2319298.png";
-const sendPanditEmail = async (panditEmail, status, phoneNo,
+const sendPanditEmail = async (panditEmail, phoneNo,
 fullname, userName, poojaType, date, time, address) => {
     try {
         const transporter = nodemailer.createTransport({
@@ -132,7 +132,7 @@ module.exports.createBooking = async (req, res) => {
             address,
             panditId,
             userId,
-            status, // Assuming confirmed status on creation
+            status:"confirmed", // Assuming confirmed status on creation
         });
 
         await newBooking.save();
@@ -148,7 +148,7 @@ module.exports.createBooking = async (req, res) => {
 
         // Fetch Pandit Email
         const pandit = await Pandit.findById(panditId);
-        if (pandit && pandit.email && status === "confirmed") {
+        if (pandit && pandit.email ) {
           
             await sendPanditEmail(pandit.email, pandit.name, name, poojaType, date, time, address);
         }
