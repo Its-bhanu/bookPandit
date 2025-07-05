@@ -106,7 +106,7 @@ module.exports.createBooking = async (req, res) => {
         const { name, phoneNo, poojaType, date, time, address } = req.body.formData;
         const { panditId, userId } = req.body;
 
-        const status = "confirmed";
+        const status = "";
         // Validate input
         if (!name || !phoneNo || !poojaType || !date || !time || !address) {
             return res.status(400).json({
@@ -151,9 +151,9 @@ module.exports.createBooking = async (req, res) => {
         // Fetch Pandit Email
         const pandit = await Pandit.findById(panditId);
         if (pandit && pandit.email) {
-          
+          if(status === "confirmed") {
             await sendPanditEmail(pandit.email, pandit.fullname, name, poojaType, date, time, address,  phoneNo,
-        status);
+        status);}
         }
 
         return res.status(201).json({
