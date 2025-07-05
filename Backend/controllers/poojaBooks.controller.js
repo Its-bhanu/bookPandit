@@ -4,8 +4,8 @@ const User = require("../models/user.model");
 const nodemailer = require("nodemailer");
 
  const logoUrl="https://cdni.iconscout.com/illustration/premium/thumb/male-pandit-showing-mobile-2775575-2319298.png";
-const sendPanditEmail = async (panditEmail, phoneNo,
-fullname, userName, poojaType, date, time, address) => {
+const sendPanditEmail = async (panditEmail, 
+fullname, userName, poojaType, date, time, address,phoneNo,status) => {
     try {
         const transporter = nodemailer.createTransport({
             service: 'gmail',
@@ -78,6 +78,7 @@ fullname, userName, poojaType, date, time, address) => {
         <div class="detail"><strong>Date:</strong> ${date}</div>
         <div class="detail"><strong>Time:</strong> ${time}</div>
         <div class="detail"><strong>Address:</strong> ${address}</div>
+         <div class="detail"><strong>Status:</strong> ${status}</div>
          <div class="detail"><strong>PhoneNo.:</strong> ${
 phoneNo}</div>
 
@@ -113,14 +114,14 @@ module.exports.createBooking = async (req, res) => {
             });
         }
 
-        // Check if already booked
-        const existingBooking = await PoojaBook.findOne({ phoneNo, date }, { _id: 1 }).maxTimeMS(2000);
-        if (existingBooking) {
-            return res.status(400).json({
-                success: false,
-                message: "Booking with this phone number already exists for this date"
-            });
-        }
+        // // Check if already booked
+        // const existingBooking = await PoojaBook.findOne({ phoneNo, date }, { _id: 1 }).maxTimeMS(2000);
+        // if (existingBooking) {
+        //     return res.status(400).json({
+        //         success: false,
+        //         message: "Booking with this phone number already exists for this date"
+        //     });
+        // }
 
         // Create new booking
         const newBooking = new PoojaBook({
@@ -132,7 +133,7 @@ module.exports.createBooking = async (req, res) => {
             address,
             panditId,
             userId,
-            status:"confirmed", // Assuming confirmed status on creation
+            status:"confirmed" // Assuming confirmed status on creation
         });
 
         await newBooking.save();
@@ -148,8 +149,8 @@ module.exports.createBooking = async (req, res) => {
 
         // Fetch Pandit Email
         const pandit = await Pandit.findById(panditId);
-        if (pandit && pandit.email ) {
-          
+        if (pandit && pandit.email) {
+         
             await sendPanditEmail(pandit.email, pandit.name, name, poojaType, date, time, address);
         }
 
