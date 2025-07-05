@@ -3,9 +3,9 @@ import Header from "../components/Header";
 
 const VastuSastra = () => {
   return (
-    
+    <div><Header />
     <div className="screen-full bg-gray-100 p-6">
-      <Header />
+      
       <div className="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
         <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">Vastu Sastra</h1>
         
@@ -87,7 +87,7 @@ const VastuSastra = () => {
             Download Vastu Sastra PDF
             </a>
           </button>
-    </div>
+    </div></div>
   );
 };
 

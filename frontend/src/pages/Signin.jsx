@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import Header from "../components/Header"; // Importing Header component
 const Signin = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
@@ -38,9 +38,10 @@ const Signin = () => {
   };
 
   return (
+    <div><Header/>
     <div className="flex justify-center items-center h-screen bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">
-        <h2 className="text-2xl font-bold text-center text-gray-800 mb-6 bg-yellow-100">Pandit Sign In</h2>
+        <h2 className="text-2xl font-bold text-center text-gray-800 mb-6 bg-yellow-100 p-4 rounded-4xl">Pandit Sign In</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2">Email</label>
@@ -120,7 +121,7 @@ const Signin = () => {
           pauseOnHover
         />
       </div>
-    </div>
+    </div></div>
   );
 };
 

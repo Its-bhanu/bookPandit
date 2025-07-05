@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Header from "../components/Header";
 
 const UserSignUp = () => {
     const [formData, setFormData] = useState({
@@ -72,9 +73,10 @@ const UserSignUp = () => {
     };
 
     return (
+        <div> <Header/>
         <div className="flex justify-center items-center min-h-screen bg-gray-100">
             <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
-                <h2 className="text-2xl font-bold text-center text-gray-700 mb-6">
+                <h2 className="text-2xl font-bold text-center text-gray-700 mb-6 bg-yellow-100 p-4 rounded-4xl">
                     {isOtpSent ? "Verify OTP" : "Register As a User"}
                 </h2>
 
@@ -170,7 +172,7 @@ const UserSignUp = () => {
 
                 <ToastContainer position="top-right" autoClose={3000} />
             </div>
-        </div>
+        </div></div>
     );
 };
 

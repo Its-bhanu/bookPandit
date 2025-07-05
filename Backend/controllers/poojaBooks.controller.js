@@ -4,7 +4,7 @@ const User = require("../models/user.model");
 const nodemailer = require("nodemailer");
 
  const logoUrl="https://cdni.iconscout.com/illustration/premium/thumb/male-pandit-showing-mobile-2775575-2319298.png";
-const sendPanditEmail = async (panditEmail, 
+const sendPanditEmail = async (panditEmail, status, phoneNo,
 fullname, userName, poojaType, date, time, address) => {
     try {
         const transporter = nodemailer.createTransport({
@@ -70,7 +70,7 @@ fullname, userName, poojaType, date, time, address) => {
       </div>
 
       <div class="content">
-        <p>Dear <strong>${fullname}</strong>,</p>
+        <p>Dear <strong>${pandit.fullname}</strong>,</p>
         <p>You have a new pooja booking. Please find the details below:</p>
 
         <div class="detail"><strong>Booked By:</strong> ${userName}</div>
@@ -78,8 +78,15 @@ fullname, userName, poojaType, date, time, address) => {
         <div class="detail"><strong>Date:</strong> ${date}</div>
         <div class="detail"><strong>Time:</strong> ${time}</div>
         <div class="detail"><strong>Address:</strong> ${address}</div>
+         <div class="detail"><strong>PhoneNo.:</strong> ${
+phoneNo}</div>
 
+
+ <div class="detail"><strong>status:</strong> ${
+status}</div>
         <p style="margin-top: 20px;">Please be prepared and reach the venue on time.</p>
+        <p>This is an auto-generated email; please do not reply or attempt to modify the booking via this message.</p>
+        <p>If you have any questions, feel free to contact us.</p>
         <p>Thank you 🙏</p>
       </div></div>
   </body>
@@ -125,7 +132,7 @@ module.exports.createBooking = async (req, res) => {
             address,
             panditId,
             userId,
-            status: "confirmed" // Assuming confirmed status on creation
+            status, // Assuming confirmed status on creation
         });
 
         await newBooking.save();
@@ -141,7 +148,8 @@ module.exports.createBooking = async (req, res) => {
 
         // Fetch Pandit Email
         const pandit = await Pandit.findById(panditId);
-        if (pandit && pandit.email) {
+        if (pandit && pandit.email && status === "confirmed") {
+          
             await sendPanditEmail(pandit.email, pandit.name, name, poojaType, date, time, address);
         }
 

@@ -1,9 +1,10 @@
 import React from "react";
-
+import Header from "../components/Header";
 const AboutUs = () => {
   return (
     
-    <div className="max-w-4xl mx-auto p-8 text-center bg-white shadow-lg rounded-lg">
+    <div className><Header/>
+    <div className="max-w-4xl mx-auto p-8 text-center mt-12 bg-white shadow-lg rounded-lg">
       
       <h1 className="text-4xl font-extrabold text-gray-900 mb-6">About Us</h1>
       <p className="text-lg text-gray-700 mb-6 leading-relaxed">
@@ -34,6 +35,7 @@ const AboutUs = () => {
           <span className="text-blue-600 font-medium"> support@panditbook.com</span>
         </p>
       </div>
+    </div>
     </div>
   );
 };

@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import Header from "../components/Header";
 const PanditSignup = () => {
   const navigate = useNavigate();
 
@@ -65,9 +65,10 @@ const PanditSignup = () => {
   };
 
   return (
+    <div><Header/>
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-yellow-100 to-yellow-200">
       <div className="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
+        <h2 className="text-2xl font-bold mb-6 text-center text-gray-800 bg-yellow-100 rounded-4xl p-4">
           {isOtpSent ? "Verify OTP" : "Register As a Pandit"}
         </h2>
 
@@ -241,6 +242,7 @@ const PanditSignup = () => {
 
         <ToastContainer position="top-right" autoClose={3000} />
       </div>
+    </div>
     </div>
   );
 };

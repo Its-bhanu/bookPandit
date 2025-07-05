@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Header from "../components/Header";
 
 const UserSignIn = () => {
   const [formData, setFormData] = useState({
@@ -52,9 +53,10 @@ const UserSignIn = () => {
   };
 
   return (
+    <div><Header/>
     <div className="flex justify-center items-center h-screen bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">
-        <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">User Sign In</h2>
+        <h2 className="text-2xl font-bold text-center text-gray-800 mb-6 bg-yellow-100 p-4 rounded-4xl">User Sign In</h2>
 
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
 
@@ -135,7 +137,7 @@ const UserSignIn = () => {
 
         <ToastContainer position="top-right" autoClose={3000} />
       </div>
-    </div>
+    </div></div>
   );
 };
 

@@ -4,6 +4,7 @@ import axios from "axios";
 import { Navigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify"; // Import ToastContainer and toast
 import "react-toastify/dist/ReactToastify.css";
+import Header from "../components/Header";
 
 const PoojaBooks = () => {
   const [formData, setFormData] = useState({
@@ -81,11 +82,12 @@ const PoojaBooks = () => {
   };
 
   return (
+    <div><Header/>  
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
         <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Book a Pooja</h2>
         <form onSubmit={handleSubmit}>
-          <label className="block mb-1 text-sm font-medium text-gray-700">
+          <label className="block mb-1 text-sm font-medium text-gray-700 ">
   Full Name
 </label>
           <input
@@ -217,7 +219,7 @@ const PoojaBooks = () => {
           autoClose={3000}
         />
       </div>
-    </div>
+    </div></div>
   );
 };
 
