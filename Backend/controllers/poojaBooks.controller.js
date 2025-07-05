@@ -6,7 +6,7 @@ const nodemailer = require("nodemailer");
  const logoUrl="https://cdni.iconscout.com/illustration/premium/thumb/male-pandit-showing-mobile-2775575-2319298.png";
 
  const sendPanditEmail = async (panditEmail, 
-fullname, userName, poojaType, date, time, address) => {
+fullname, userName, poojaType, date, time, address, phoneNo,status) => {
     try {
         const transporter = nodemailer.createTransport({
             service: 'gmail',
@@ -71,7 +71,7 @@ fullname, userName, poojaType, date, time, address) => {
       </div>
 
       <div class="content">
-        <p>Dear <strong>${pandit.fullname}</strong>,</p>
+        <p>Dear <strong>${fullname}</strong>,</p>
         <p>You have a new pooja booking. Please find the details below:</p>
 
         <div class="detail"><strong>Booked By:</strong> ${userName}</div>
@@ -81,6 +81,7 @@ fullname, userName, poojaType, date, time, address) => {
         <div class="detail"><strong>Address:</strong> ${address}</div>
          <div class="detail"><strong>PhoneNo.:</strong> ${
 phoneNo}</div>
+ <div class="detail"><strong>Status:</strong> ${status}</div>
 
 
 
@@ -105,6 +106,7 @@ module.exports.createBooking = async (req, res) => {
         const { name, phoneNo, poojaType, date, time, address } = req.body.formData;
         const { panditId, userId } = req.body;
 
+        const status = "confirmed";
         // Validate input
         if (!name || !phoneNo || !poojaType || !date || !time || !address) {
             return res.status(400).json({
@@ -132,7 +134,7 @@ module.exports.createBooking = async (req, res) => {
             address,
             panditId,
             userId,
-             status: "confirmed" // Assuming confirmed status on creation
+             status, // Assuming confirmed status on creation
         });
 
         await newBooking.save();
@@ -150,7 +152,8 @@ module.exports.createBooking = async (req, res) => {
         const pandit = await Pandit.findById(panditId);
         if (pandit && pandit.email) {
           
-            await sendPanditEmail(pandit.email, pandit.fullname, name, poojaType, date, time, address);
+            await sendPanditEmail(pandit.email, pandit.fullname, name, poojaType, date, time, address,  phoneNo,
+        status);
         }
 
         return res.status(201).json({
