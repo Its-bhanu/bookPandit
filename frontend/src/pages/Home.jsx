@@ -72,17 +72,22 @@ const HomePage = () => {
             </div>
 
             <motion.div 
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8 }}
-              className="md:w-1/2"
-            >
-              <img
-                src="https://cdni.iconscout.com/illustration/premium/thumb/male-pandit-showing-mobile-2775575-2319298.png"
-                alt="Online Pandit"
-                className="w-full max-w-md mx-auto"
-              />
-            </motion.div>
+  initial={{ opacity: 0, scale: 0.9 }}
+  animate={{ opacity: 1, scale: 1 }}
+  transition={{ duration: 0.8 }}
+  className="md:w-1/2 relative flex justify-center items-center"
+>
+  <div className="relative">
+    <img
+      src="https://cdni.iconscout.com/illustration/premium/thumb/male-pandit-showing-mobile-2775575-2319298.png"
+      alt="Online Pandit"
+      className="w-full max-w-md mx-auto relative z-10"
+    />
+    
+    {/* CSS Flame */}
+    <div className="absolute -left-25 left-20 bottom-9 w-70 h-50 flame z-0"></div>
+  </div>
+</motion.div>
           </div>
 
           {/* Highlights */}
