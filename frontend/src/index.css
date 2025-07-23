@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-@keyframes flicker {
+/* @keyframes flicker {
   0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.95; }
   25% { transform: scale(1.05) rotate(-2deg); opacity: 0.9; }
   50% { transform: scale(0.95) rotate(2deg); opacity: 1; }
@@ -12,4 +12,4 @@
   border-radius: 50% 50% 40% 40% / 60% 60% 40% 40%;
   animation: flicker 0.8s infinite ease-in-out;
   filter: blur(1px);
-}
+} */

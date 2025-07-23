@@ -85,7 +85,7 @@ const HomePage = () => {
     />
     
     {/* CSS Flame */}
-    <div className="absolute -left-25 left-20 bottom-9 w-70 h-50 flame z-0"></div>
+    {/* <div className="absolute -left-25 left-20 bottom-9 w-70 h-50 flame z-0"></div> */}
   </div>
 </motion.div>
           </div>
