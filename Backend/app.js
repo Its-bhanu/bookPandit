@@ -11,6 +11,7 @@ const paymentRoutes=require('./routes/payment.routes');
 const panditRoutes=require('./routes/pandit.routes')
 const poojaRoutes=require("./routes/poojaBooks.routes");
 const ForgetPasswordRoutes=require("./routes/ForgetPass.routes");
+const astrologyRoutes = require("./routes/astrology.routes")
 // console.log("heelo")
 app.use(cors({
     origin: '*'
@@ -27,6 +28,7 @@ app.use("/api/booking",poojaRoutes);
 app.use("/api",ForgetPasswordRoutes);
 db=connectToDb();
 app.use('/api/payment',paymentRoutes);
+app.use("/api/astrology", astrologyRoutes);
 
 
 module.exports=app;

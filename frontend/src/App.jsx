@@ -18,6 +18,7 @@ import AboutUs from "./pages/Aboutus";
 import Forgetpasspandit from './pages/Forgetpasspandit';
 import AstroConsult from './pages/AstroConsult';
 import PanditChat from './pages/ChatPage';
+import AiAstrologyForm from "./pages/aiAstrology";
 function App() {
   return (
     <BrowserRouter>
@@ -39,6 +40,7 @@ function App() {
         <Route path='/aboutus' element={<AboutUs/>}/>
         <Route path='/AstroConsult' element={<AstroConsult/>}/>
         <Route path="/panditChat" element={<PanditChat />} />
+        <Route path="/aiAstrology" element={<AiAstrologyForm />} />
        </Routes>
    
       </div>

@@ -246,6 +246,24 @@ const HomePage = () => {
                 Learn More
               </Link>
             </motion.div>
+             <motion.div
+  whileHover={{ y: -10 }}
+  whileTap={{ scale: 0.98 }}
+  className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all border-b-4 border-indigo-500"
+>
+  <div className="text-indigo-500 text-4xl mb-4">🔮</div>
+  <h3 className="text-2xl font-bold mb-4 text-gray-800"> AI Astrology Prediction</h3>
+  <p className="text-gray-600 mb-6">
+    Get personalized astrological predictions including doshas, yogas, and remedies from Gemini AI.
+  </p>
+  <Link
+    to="/aiAstrology"
+    className="inline-block bg-indigo-500 hover:bg-indigo-600 text-white px-6 py-3 rounded-full font-medium transition"
+  >
+    Get AI Astrology Prediction
+  </Link>
+</motion.div>
+
           </div>
         </div>
       </section>
