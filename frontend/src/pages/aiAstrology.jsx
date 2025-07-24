@@ -48,7 +48,7 @@ const AiAstrologyForm = () => {
     setIsHindi(false);
 
     try {
-      const response = await axios.post("http://localhost:4000/api/astrology/generate", formData);
+      const response = await axios.post("https://book-pandit-mmed.vercel.app/api/astrology/generate", formData);
       setSuggestion(response.data.suggestion);
     } catch (error) {
       console.error("Error fetching astrology suggestion:", error);
