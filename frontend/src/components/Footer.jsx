@@ -16,7 +16,7 @@ const Footer = () => {
        
         <div className="flex flex-wrap justify-center space-x-6 text-gray-300 text-sm pt-4">
           <a href="/" className="hover:text-gray-400">Home</a>
-          <a href="aboutus" className="hover:text-gray-400">About Us</a>
+          <a href="/aboutus" className="hover:text-gray-400">About Us</a>
           <a href="/" className="hover:text-gray-400">Services</a>
           <Link to={"/contactUs"} className="hover:text-gray-400">Contact us</Link>
           <a href="#" className="hover:text-gray-400">FAQs</a>

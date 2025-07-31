@@ -1,12 +1,15 @@
 import React, { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-
 import Header from "../components/Header";
 import Achievements from "../components/Achievements";
 import Testimonials from "../components/Testimonials";
+import SkiperScrollText from "../components/SkiperScrollText";
+import FAQSection from "../components/FAQSection";
 
-const HomePage = () => {
+
+
+ const HomePage = () => {
   const location = useLocation();
 
   useEffect(() => {
@@ -18,6 +21,8 @@ const HomePage = () => {
   return (
     <div className="bg-gray-50 relative font-sans antialiased">
       <Header />
+     
+      
 
       {/* Hero Section */}
       <section className="relative text-center py-24 bg-gradient-to-br from-white to-blue-50 overflow-hidden">
@@ -115,6 +120,9 @@ const HomePage = () => {
           </motion.div>
         </div>
       </section>
+      <SkiperScrollText/>
+     
+     
 
       {/* Info Section */}
       <section className="py-20 bg-white">
@@ -268,7 +276,8 @@ const HomePage = () => {
         </div>
       </section>
 
-      <Achievements />
+      <Achievements /> 
+      <FAQSection/>
       <Testimonials />
 
       {/* Floating WhatsApp and Phone Icons */}
