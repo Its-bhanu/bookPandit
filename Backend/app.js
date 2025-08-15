@@ -51,7 +51,7 @@ app.use(cors());
 //   });
 // });
 
-app.use("/api/ai" , predictionRoutes)
+app.use("/api" , predictionRoutes)
 app.use('/api/users',userRoutes);
 app.use("/api/pandits",panditRoutes);
 app.use("/api/booking",poojaRoutes); 
