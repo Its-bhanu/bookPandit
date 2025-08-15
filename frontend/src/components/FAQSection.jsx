@@ -41,7 +41,7 @@ export default function FAQSection() {
           <li>Click the "Get AI Astrology Prediction" button on the homepage.</li>
           <li>Enter your birth details: date, time, and place.</li>
           <li>Submit the form to receive your personalized astrology report.</li>
-          <li>The report is generated using Gemini AI.</li>
+          <li>The report is generated using Perplexity AI.</li>
         </ol>
       ),
     },

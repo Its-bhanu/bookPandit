@@ -20,7 +20,9 @@ const ThankYouPage = () => {
   };
 
   return (
+    
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-green-100 to-blue-200 p-6">
+
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -35,8 +37,8 @@ const ThankYouPage = () => {
         >
           🎉 Thank You!
         </motion.h2>
-        <p className="text-gray-700 text-lg">Your booking has been successfully confirmed.</p>
-        <p className="text-gray-600 mt-2">We appreciate your trust in our service.</p>
+        {/* <p className="text-gray-700 text-lg">Your booking has been successfully confirmed.</p> */}
+        <p className="text-gray-600 mt-2">We appreciate your trust in our services.</p>
 
         {submitted ? (
           <motion.div

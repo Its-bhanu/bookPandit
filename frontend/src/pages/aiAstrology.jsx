@@ -1,163 +1,196 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import { motion } from "framer-motion";
-import Header from "../components/Header";
+import { useNavigate } from "react-router-dom";
 
-const AiAstrologyForm = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    birthDate: "",
-    birthTime: "",
-    birthPlace: "",
-  });
-
+export default function AstroChat() {
+  const [step, setStep] = useState(0); // 0: Name, 1: DOB, 2: Time, 3: Place, 4: Chat
+  const [name, setName] = useState("");
+  const [dob, setDob] = useState("");
+  const [birthTime, setBirthTime] = useState("");
+  const [birthPlace, setBirthPlace] = useState("");
+  const [question, setQuestion] = useState("");
+  const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [suggestion, setSuggestion] = useState("");
-  const [isHindi, setIsHindi] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(60); // 6:30 = 390 seconds
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const chatEndRef = useRef(null);
+ const navigate = useNavigate();
+
+  useEffect(() => {
+    // Start timer when chat begins
+    if (step === 4 && timeLeft > 0) {
+      const timer = setInterval(() => {
+        setTimeLeft((prev) => prev - 1);
+      }, 1000);
+      return () => clearInterval(timer);
+    }
+    if(step === 4 && timeLeft === 0){
+    alert("⏳ आपका चैट समय समाप्त हो गया है।");
+    navigate('/feedback')
+  }
+  }, [step, timeLeft , navigate]);
+
+  
+
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  const formatTime = (seconds) => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${s.toString().padStart(2, "0")}`;
   };
 
-  const formatSuggestion = (text) => {
-    return text
-      .split("\n")
-      .filter((line) => line.trim() !== "")
-      .map((line, index) => <li key={index} className="mb-2">🔹 {line.trim()}</li>);
-  };
+  const handleNextStep = () => {
+    if (step === 0 && !name.trim()) return alert("Please enter your name.");
+    if (step === 1 && !dob) return alert("Please select your date of birth.");
+    if (step === 2 && !birthTime) return alert("Please enter your birth time.");
+    if (step === 3 && !birthPlace.trim()) return alert("Please enter your birth place.");
 
-  const handleTranslate = async () => {
-    try {
-      const res = await axios.post("https://libretranslate.de/translate", {
-        q: suggestion,
-        source: "en",
-        target: "hi",
-        format: "text",
-      });
-      setSuggestion(res.data.translatedText);
-      setIsHindi(true);
-    } catch (error) {
-      console.error("Translation error:", error);
+    setStep(step + 1);
+
+    if (step === 0)
+      setMessages((prev) => [...prev, { sender: "ai", text: "Great! Please share your Date of Birth." }]);
+    if (step === 1)
+      setMessages((prev) => [...prev, { sender: "ai", text: "Now, please tell me your Birth Time." }]);
+    if (step === 2)
+      setMessages((prev) => [...prev, { sender: "ai", text: "Lastly, where were you born?" }]);
+    if (step === 3) {
+      setMessages((prev) => [
+        ...prev,
+        { sender: "ai", text: "Perfect! Now ask me any astrology question." }
+      ]);
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const sendMessage = async () => {
+    if (!question.trim()) return;
+    setMessages((prev) => [...prev, { sender: "user", text: question }]);
     setLoading(true);
-    setSuggestion("");
-    setIsHindi(false);
 
     try {
-      const response = await axios.post("https://book-pandit-mmed.vercel.app/api/astrology/generate", formData);
-      setSuggestion(response.data.suggestion);
-    } catch (error) {
-      console.error("Error fetching astrology suggestion:", error);
-      setSuggestion("Something went wrong. Please try again.");
-    } finally {
-      setLoading(false);
+      const res = await axios.post("http://localhost:4000/api/predict", {
+        name,
+        dob,
+        birthTime,
+        birthPlace,
+        question,
+      });
+
+      setMessages((prev) => [
+        ...prev,
+        { sender: "ai", text: res.data.prediction }
+      ]);
+    } catch (err) {
+      console.error(err);
+      alert("Error getting prediction");
     }
+
+    setLoading(false);
+    setQuestion("");
   };
 
   return (
-    <div>
-      <Header />
-      <div className="min-h-screen px-4 py-10 bg-gradient-to-b from-blue-50 to-white flex flex-col items-center">
-        <motion.h1
-          initial={{ opacity: 0, y: -30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-4xl font-bold text-indigo-600 mb-6"
-        >
-          AI Astrology Prediction
-        </motion.h1>
+    <div className="flex flex-col h-screen bg-gradient-to-br from-purple-200 to-blue-200 p-4">
+      {/* Timer */}
+      {step === 4 && (
+        <div className="text-center font-bold text-lg mb-2 bg-white py-2 rounded shadow">
+          ⏳ Chat Time Left: {formatTime(timeLeft)}
+        </div>
+      )}
 
-        <form
-          onSubmit={handleSubmit}
-          className="w-full max-w-xl bg-white p-8 rounded-2xl shadow-md border border-indigo-100"
-        >
-          <div className="mb-4">
-            <label className="block text-gray-700 mb-1 font-semibold">Full Name</label>
+      <h1 className="text-3xl font-bold text-center mb-4 text-purple-800">
+        🔮 AI Astrology Chat
+      </h1>
+
+      {/* Chat Box */}
+      <div className="flex-1 overflow-y-auto bg-white shadow p-4 rounded-lg">
+        {messages.map((msg, i) => (
+          <div
+            key={i}
+            className={`p-3 my-2 max-w-[75%] rounded-lg ${
+              msg.sender === "user"
+                ? "bg-blue-500 text-white ml-auto"
+                : "bg-green-100 text-black mr-auto"
+            }`}
+          >
+            {msg.text.split("\n").map((line, idx) => (
+              <div key={idx}>{line}</div>
+            ))}
+          </div>
+        ))}
+        {loading && (
+          <div className="bg-gray-200 p-3 rounded-lg w-fit text-sm animate-pulse">
+            AI is typing...
+          </div>
+        )}
+        <div ref={chatEndRef} />
+      </div>
+
+      {/* Step-based Inputs */}
+      <div className="mt-4">
+        {step < 4 ? (
+          <>
+            {step === 0 && (
+              <input
+                type="text"
+                placeholder="Enter Name"
+                className="border p-2 w-full rounded"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            )}
+            {step === 1 && (
+              <input
+                type="date"
+                className="border p-2 w-full rounded"
+                value={dob}
+                onChange={(e) => setDob(e.target.value)}
+              />
+            )}
+            {step === 2 && (
+              <input
+                type="time"
+                className="border p-2 w-full rounded"
+                value={birthTime}
+                onChange={(e) => setBirthTime(e.target.value)}
+              />
+            )}
+            {step === 3 && (
+              <input
+                type="text"
+                placeholder="Enter Birth Place"
+                className="border p-2 w-full rounded"
+                value={birthPlace}
+                onChange={(e) => setBirthPlace(e.target.value)}
+              />
+            )}
+            <button
+              onClick={handleNextStep}
+              className="bg-purple-600 text-white px-4 py-2 rounded mt-2 w-full"
+            >
+              Next
+            </button>
+          </>
+        ) : (
+          <div className="flex gap-2">
             <input
               type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              className="w-full border px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
-              required
+              placeholder="Ask your question..."
+              className="border p-2 flex-1 rounded"
+              value={question}
+              onChange={(e) => setQuestion(e.target.value)}
             />
+            <button
+              onClick={sendMessage}
+              className="bg-blue-600 text-white px-4 py-2 rounded"
+            >
+              Send
+            </button>
           </div>
-
-          <div className="mb-4">
-            <label className="block text-gray-700 mb-1 font-semibold">Birth Date</label>
-            <input
-              type="date"
-              name="birthDate"
-              value={formData.birthDate}
-              onChange={handleChange}
-              className="w-full border px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
-              required
-            />
-          </div>
-
-          <div className="mb-4">
-            <label className="block text-gray-700 mb-1 font-semibold">Birth Time</label>
-            <input
-              type="time"
-              name="birthTime"
-              value={formData.birthTime}
-              onChange={handleChange}
-              className="w-full border px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
-              required
-            />
-          </div>
-
-          <div className="mb-6">
-            <label className="block text-gray-700 mb-1 font-semibold">Birth Place</label>
-            <input
-              type="text"
-              name="birthPlace"
-              value={formData.birthPlace}
-              onChange={handleChange}
-              className="w-full border px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
-              required
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-md transition font-semibold"
-          >
-            {loading ? "Generating..." : "Get Prediction"}
-          </button>
-        </form>
-
-        {suggestion && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="mt-8 max-w-3xl bg-white p-6 rounded-lg shadow-md border border-indigo-200 text-gray-800"
-          >
-            <div className="flex justify-between items-center mb-3">
-              <h2 className="text-xl font-semibold text-indigo-600">Your Astrology Report:</h2>
-              {/* {!isHindi && (
-                <button
-                  onClick={handleTranslate}
-                  className="bg-yellow-500 hover:bg-yellow-600 text-white text-sm px-4 py-1 rounded-full"
-                >
-                  Translate to Hindi
-                </button>
-              )} */}
-            </div>
-            <ul className="list-disc pl-5 text-gray-700">
-              {formatSuggestion(suggestion)}
-            </ul>
-          </motion.div>
         )}
       </div>
     </div>
   );
-};
-
-export default AiAstrologyForm;
+}

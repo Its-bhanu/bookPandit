@@ -3,38 +3,44 @@ import { motion } from "framer-motion";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { FaSearch, FaStar, FaRegStar } from "react-icons/fa";
+import { jwtDecode } from "jwt-decode";
+
+const BACKEND_URL = "https://your-backend-host.com"; // change to your backend's URL
 
 const AstroConsult = () => {
   const [message, setMessage] = useState("");
   const [astrologers, setAstrologers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [userId, setUserId] = useState("");
   const navigate = useNavigate();
 
-  // List of all expertise to filter
   const expertiseList = [
     "astrolog",
     "astrology",
     "Vastu Consultant",
     "Numerologist",
-    "Palmist"
+    "Palmist",
   ];
 
   useEffect(() => {
     const fetchAstrologers = async () => {
       try {
         setIsLoading(true);
-        const response = await axios.get(" https://book-pandit-mmed.vercel.app/api/pandits/AllProfiles");
-        const dataArray = Array.isArray(response.data) ? response.data : [response.data];
-        
-        // Filter based on all expertise in the list
+        const response = await axios.get(
+          "https://book-pandit-mmed.vercel.app/api/pandits/AllProfiles"
+        );
+        const dataArray = Array.isArray(response.data)
+          ? response.data
+          : [response.data];
+
         const filtered = dataArray.filter((astro) => {
           const astroExpertise = astro?.expertise?.toString().toLowerCase();
-          return expertiseList.some(expertise => 
+          return expertiseList.some((expertise) =>
             astroExpertise.includes(expertise.toLowerCase())
           );
         });
-        
+
         setAstrologers(filtered);
         if (filtered.length === 0) setMessage("No astrologers found at the moment.");
       } catch (error) {
@@ -47,31 +53,46 @@ const AstroConsult = () => {
     fetchAstrologers();
   }, []);
 
+  useEffect(() => {
+    const token = localStorage.getItem("userlogintoken");
+    if (token) {
+      const decode = jwtDecode(token);
+      setUserId(decode._id);
+    } else {
+      console.log("No token found");
+    }
+  }, []);
+
   const handleChatWithPandit = (panditId) => {
-    navigate("/panditChat", {
-      state: { panditId },
+    const roomId = `${userId}_${panditId}`;
+    navigate(`/panditChat/${roomId}`, {
+      state: { panditId, userId, roomId },
     });
   };
 
-  const filteredAstrologers = astrologers.filter(astro => {
-    return astro.fullname?.toLowerCase().includes(searchTerm.toLowerCase()) || 
-           astro.expertise?.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredAstrologers = astrologers.filter((astro) => {
+    return (
+      astro.fullname?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      astro.expertise?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
   });
 
   const renderStars = (rating) => {
-    return [...Array(5)].map((_, i) => (
-      i < rating ? <FaStar key={i} className="text-yellow-400" /> : <FaRegStar key={i} className="text-yellow-400" />
-    ));
+    return [...Array(5)].map((_, i) =>
+      i < rating ? (
+        <FaStar key={i} className="text-yellow-400" />
+      ) : (
+        <FaRegStar key={i} className="text-yellow-400" />
+      )
+    );
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
       <header className="bg-indigo-700 text-white py-4 px-6 shadow-md">
         <h1 className="text-2xl font-bold">Astrology Consultation</h1>
       </header>
 
-      {/* Search Section */}
       <section className="py-8 px-4 md:px-12 bg-white shadow-sm">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">
@@ -90,7 +111,6 @@ const AstroConsult = () => {
         </div>
       </section>
 
-      {/* Main Content */}
       <main className="py-8 px-4 md:px-12 max-w-6xl mx-auto">
         {isLoading ? (
           <div className="flex justify-center items-center py-20">
@@ -111,13 +131,20 @@ const AstroConsult = () => {
                 <div className="p-6">
                   <div className="flex flex-col items-center mb-4">
                     <img
-                      src={astro.image || astro.profileImage || "https://www.creativehatti.com/wp-content/uploads/edd/2022/11/Indian-pandit-is-sitting-with-greet-hand-2-large.jpg"}
+                      src={
+                        astro.image ||
+                        astro.profileImage ||
+                        "https://www.creativehatti.com/wp-content/uploads/edd/2022/11/Indian-pandit-is-sitting-with-greet-hand-2-large.jpg"
+                      }
                       alt={astro.fullname}
                       className="w-20 h-20 rounded-full border-2 border-indigo-100 object-cover"
                     />
-                    <h3 className="text-xl font-semibold mt-3 text-gray-800">{astro.fullname || "Astrologer"}</h3>
-                    <p className="text-indigo-600 text-sm">{astro.expertise || "Vedic Astrologer"}</p>
-                    
+                    <h3 className="text-xl font-semibold mt-3 text-gray-800">
+                      {astro.fullname || "Astrologer"}
+                    </h3>
+                    <p className="text-indigo-600 text-sm">
+                      {astro.expertise || "Vedic Astrologer"}
+                    </p>
                   </div>
 
                   <div className="flex justify-center mb-3">
@@ -128,9 +155,18 @@ const AstroConsult = () => {
                   </div>
 
                   <div className="space-y-2 text-sm text-gray-600 mb-4">
-                    <p><span className="font-medium">Experience:</span> {astro.experience || '5'} years</p>
-                    <p><span className="font-medium">Languages:</span> {astro.languages || 'Hindi, English'}</p>
-                    <p><span className="font-medium">Specialty:</span> {astro.expertise || 'Vedic, Horoscope, Palmistry'}</p>
+                    <p>
+                      <span className="font-medium">Experience:</span>{" "}
+                      {astro.experience || "5"} years
+                    </p>
+                    <p>
+                      <span className="font-medium">Languages:</span>{" "}
+                      {astro.languages || "Hindi, English"}
+                    </p>
+                    <p>
+                      <span className="font-medium">Specialty:</span>{" "}
+                      {astro.expertise || "Vedic, Horoscope, Palmistry"}
+                    </p>
                   </div>
 
                   <button

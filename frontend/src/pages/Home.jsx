@@ -262,7 +262,7 @@ import FAQSection from "../components/FAQSection";
   <div className="text-indigo-500 text-4xl mb-4">🔮</div>
   <h3 className="text-2xl font-bold mb-4 text-gray-800"> AI Astrology Prediction</h3>
   <p className="text-gray-600 mb-6">
-    Get personalized astrological predictions including doshas, yogas, and remedies from Gemini AI.
+    Get personalized astrological predictions including doshas, yogas, and remedies from  AI.
   </p>
   <Link
     to="/aiAstrology"
