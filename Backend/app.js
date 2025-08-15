@@ -51,10 +51,6 @@ app.use(cors());
 //   });
 // });
 
-
-
-
-
 app.use("/api/ai" , predictionRoutes)
 app.use('/api/users',userRoutes);
 app.use("/api/pandits",panditRoutes);

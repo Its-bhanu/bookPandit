@@ -11,7 +11,7 @@ export default function AstroChat() {
   const [question, setQuestion] = useState("");
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(60); // 6:30 = 390 seconds
+  const [timeLeft, setTimeLeft] = useState(330); // 6:30 = 390 seconds
 
   const chatEndRef = useRef(null);
  const navigate = useNavigate();
