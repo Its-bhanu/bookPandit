@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { io } from "socket.io-client";
 
-const BACKEND_URL = "http://localhost:4000/"; // change to your backend URL
+// const BACKEND_URL = "http://localhost:4000/"; // change to your backend URL
 
 let socket;
 

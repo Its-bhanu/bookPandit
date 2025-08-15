@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { getAstrologyPrediction } = require("../controllers/predictionController");
+const { getAstrologyPrediction } = require("../controllers/astrology.controller");
 
 router.post("/predict", getAstrologyPrediction);
 
