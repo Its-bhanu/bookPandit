@@ -1,15 +1,13 @@
 const mongoose = require("mongoose");
 
-const AstrologySchema = new mongoose.Schema({
+const predictionSchema = new mongoose.Schema({
   name: String,
-  birthDate: String,
+  dob: String,
   birthTime: String,
   birthPlace: String,
-  suggestion: String,
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
+  question: String,
+  prediction: String,
+  createdAt: { type: Date, default: Date.now }
 });
 
-module.exports = mongoose.model("Astrology", AstrologySchema);
+module.exports = mongoose.model("Prediction", predictionSchema);
