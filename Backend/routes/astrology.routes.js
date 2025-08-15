@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const { generateAstrologyReport } = require("../controllers/astrology.controller");
+const { getAstrologyPrediction } = require("../controllers/astrology.controller");
 
-router.post("/generate", generateAstrologyReport);
+router.post("/predict", getAstrologyPrediction);
 
 module.exports = router;
