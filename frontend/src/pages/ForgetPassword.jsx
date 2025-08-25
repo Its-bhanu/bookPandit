@@ -1,14 +1,15 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ForgetPassword = () => {
   const [step, setStep] = useState(1); // 1: Email, 2: OTP, 3: Reset Password
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
-  const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(false); // Loader state
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   // Handle sending OTP
@@ -20,10 +21,10 @@ const ForgetPassword = () => {
         "https://book-pandit-mmed.vercel.app/api/user/forget-password",
         { email }
       );
-      setMessage(response.data.message);
+      toast.success(response.data.message || "OTP sent successfully!");
       setStep(2); // Move to OTP step
     } catch (error) {
-      setMessage(error.response?.data?.message || "Error sending OTP!");
+      toast.error(error.response?.data?.message || "Error sending OTP!");
     } finally {
       setLoading(false);
     }
@@ -38,10 +39,10 @@ const ForgetPassword = () => {
         "https://book-pandit-mmed.vercel.app/api/user/verify-otp",
         { email, otp }
       );
-      setMessage(response.data.message || "OTP verified successfully!");
+      toast.success(response.data.message || "OTP verified!");
       setStep(3); // Move to Reset Password step
     } catch (error) {
-      setMessage(error.response?.data?.message || "Invalid OTP!");
+      toast.error(error.response?.data?.message || "Invalid OTP!");
     } finally {
       setLoading(false);
     }
@@ -54,16 +55,17 @@ const ForgetPassword = () => {
     try {
       const response = await axios.post(
         "https://book-pandit-mmed.vercel.app/api/user/reset-password",
-        {
-          email,
-          otp,
-          newPassword,
-        }
+        { email, otp, newPassword }
       );
-      setMessage(response.data.message || "Password reset successful!");
-      setTimeout(() => navigate("/UserSignIn"), 1500);
+
+      toast.success(response.data.message || "Password reset successful!");
+
+      // ✅ navigate after success with delay so toast is visible
+      setTimeout(() => {
+        navigate("/UserSignIn");
+      }, 1500);
     } catch (error) {
-      setMessage(error.response?.data?.message || "Error resetting password!");
+      toast.error(error.response?.data?.message || "Error resetting password!");
     } finally {
       setLoading(false);
     }
@@ -77,16 +79,6 @@ const ForgetPassword = () => {
           {step === 2 && "Enter OTP"}
           {step === 3 && "Reset Password"}
         </h2>
-
-        {message && (
-          <p
-            className={`text-center ${
-              message.includes("success") ? "text-green-500" : "text-red-500"
-            }`}
-          >
-            {message}
-          </p>
-        )}
 
         {/* Loader */}
         {loading && (
@@ -160,6 +152,9 @@ const ForgetPassword = () => {
           </a>
         </p>
       </div>
+
+      {/* ✅ Toast Container */}
+      <ToastContainer position="top-right" autoClose={3000} theme="colored" />
     </div>
   );
 };
