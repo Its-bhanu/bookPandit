@@ -8,48 +8,68 @@ const ForgetPassword = () => {
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false); // loader
   const navigate = useNavigate();
 
   // Handle sending OTP
   const handleEmailSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
-      const response = await axios.post(" https://book-pandit-mmed.vercel.app/api/pandit/forget-password", { email });
+      const response = await axios.post(
+        "https://book-pandit-mmed.vercel.app/api/pandit/forget-password",
+        { email }
+      );
       setMessage(response.data.message);
       setStep(2); // Move to OTP step
     } catch (error) {
       setMessage(error.response?.data?.message || "Error sending OTP!");
+    } finally {
+      setLoading(false);
     }
   };
 
   // Handle OTP verification
   const handleOtpSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
-      // In production, OTP should be verified by backend
-      setMessage("OTP verified successfully!");
-      setStep(3); // Move to Reset Password step
+      const response = await axios.post(
+        "https://book-pandit-mmed.vercel.app/api/pandit/verify-otp",
+        { email, otp }
+      );
+      setMessage(response.data.message);
+      setStep(3); // OTP verified -> go to reset password step
     } catch (error) {
-      setMessage("Invalid OTP!");
+      setMessage(error.response?.data?.message || "Invalid OTP!");
+    } finally {
+      setLoading(false);
     }
   };
 
   // Handle Password Reset
   const handleResetPassword = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
-      const response = await axios.post(" https://book-pandit-mmed.vercel.app/api/pandit/reset-password", {
-        email,
-        otp,
-        newPassword,
-      });
+      const response = await axios.post(
+        "https://book-pandit-mmed.vercel.app/api/pandit/reset-password",
+        {
+          email,
+          otp,
+          newPassword,
+        }
+      );
       setMessage(response.data.message);
-      
-      
+
+      // ✅ navigate after success
+      if (response.data.success) {
         navigate("/PanditSignIn");
-      
+      }
     } catch (error) {
       setMessage(error.response?.data?.message || "Error resetting password!");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -64,7 +84,13 @@ const ForgetPassword = () => {
 
         {message && <p className="text-center text-red-500">{message}</p>}
 
-        {step === 1 && (
+        {loading && (
+          <div className="flex justify-center my-3">
+            <div className="w-6 h-6 border-4 border-blue-500 border-dashed rounded-full animate-spin"></div>
+          </div>
+        )}
+
+        {!loading && step === 1 && (
           <form onSubmit={handleEmailSubmit}>
             <input
               type="email"
@@ -83,7 +109,7 @@ const ForgetPassword = () => {
           </form>
         )}
 
-        {step === 2 && (
+        {!loading && step === 2 && (
           <form onSubmit={handleOtpSubmit}>
             <input
               type="text"
@@ -102,7 +128,7 @@ const ForgetPassword = () => {
           </form>
         )}
 
-        {step === 3 && (
+        {!loading && step === 3 && (
           <form onSubmit={handleResetPassword}>
             <input
               type="password"

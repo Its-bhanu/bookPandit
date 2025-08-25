@@ -8,48 +8,64 @@ const ForgetPassword = () => {
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false); // Loader state
   const navigate = useNavigate();
 
   // Handle sending OTP
   const handleEmailSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
-      const response = await axios.post(" https://book-pandit-mmed.vercel.app/api/forget-password", { email });
+      const response = await axios.post(
+        "https://book-pandit-mmed.vercel.app/api/user/forget-password",
+        { email }
+      );
       setMessage(response.data.message);
       setStep(2); // Move to OTP step
     } catch (error) {
       setMessage(error.response?.data?.message || "Error sending OTP!");
+    } finally {
+      setLoading(false);
     }
   };
 
   // Handle OTP verification
   const handleOtpSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
-      // In production, OTP should be verified by backend
-      setMessage("OTP verified successfully!");
+      const response = await axios.post(
+        "https://book-pandit-mmed.vercel.app/api/user/verify-otp",
+        { email, otp }
+      );
+      setMessage(response.data.message || "OTP verified successfully!");
       setStep(3); // Move to Reset Password step
     } catch (error) {
-      setMessage("Invalid OTP!");
+      setMessage(error.response?.data?.message || "Invalid OTP!");
+    } finally {
+      setLoading(false);
     }
   };
 
   // Handle Password Reset
   const handleResetPassword = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
-      const response = await axios.post(" https://book-pandit-mmed.vercel.app/api/reset-password", {
-        email,
-        otp,
-        newPassword,
-      });
-      setMessage(response.data.message);
-      
-      
-        navigate("/UserSignIn");
-      
+      const response = await axios.post(
+        "https://book-pandit-mmed.vercel.app/api/user/reset-password",
+        {
+          email,
+          otp,
+          newPassword,
+        }
+      );
+      setMessage(response.data.message || "Password reset successful!");
+      setTimeout(() => navigate("/UserSignIn"), 1500);
     } catch (error) {
       setMessage(error.response?.data?.message || "Error resetting password!");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -62,9 +78,24 @@ const ForgetPassword = () => {
           {step === 3 && "Reset Password"}
         </h2>
 
-        {message && <p className="text-center text-red-500">{message}</p>}
+        {message && (
+          <p
+            className={`text-center ${
+              message.includes("success") ? "text-green-500" : "text-red-500"
+            }`}
+          >
+            {message}
+          </p>
+        )}
 
-        {step === 1 && (
+        {/* Loader */}
+        {loading && (
+          <div className="flex justify-center my-4">
+            <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        )}
+
+        {step === 1 && !loading && (
           <form onSubmit={handleEmailSubmit}>
             <input
               type="email"
@@ -83,7 +114,7 @@ const ForgetPassword = () => {
           </form>
         )}
 
-        {step === 2 && (
+        {step === 2 && !loading && (
           <form onSubmit={handleOtpSubmit}>
             <input
               type="text"
@@ -102,7 +133,7 @@ const ForgetPassword = () => {
           </form>
         )}
 
-        {step === 3 && (
+        {step === 3 && !loading && (
           <form onSubmit={handleResetPassword}>
             <input
               type="password"
