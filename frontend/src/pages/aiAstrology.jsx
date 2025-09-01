@@ -70,7 +70,7 @@ export default function AstroChat() {
     setLoading(true);
 
     try {
-      const res = await axios.post("https://book-pandit-mmed.vercel.app/api/ai/predict", {
+      const res = await axios.post("https://book-pandit-mmed.vercel.app/api/ai/prediction", {
         name,
         dob,
         birthTime,
