@@ -3,7 +3,7 @@ import React from "react";
 import { motion } from "framer-motion";
 
 const SkiperScrollText = () => {
-  const text = "🙏 Book Verified Pandits According To Your Satisfied loaction | 📿 Hassle-free Pooja Services | 🌟 100% Satisfaction Guaranteed | ";
+  const text = "🙏 Book Verified Pandits According To Your Satisfied location | 📿 Hassle-free Pooja Services | 🌟 100% Satisfaction Guaranteed | ";
 
   return (
     <div className="w-full overflow-hidden bg-blue-50 py-2 border-y border-yellow-50">
