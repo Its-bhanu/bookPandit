@@ -13,27 +13,28 @@ exports.getAstrologyPrediction = async (req, res) => {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
-    const prompt = `
-आप एक अनुभवी ज्योतिषी हैं और केवल ज्योतिष से संबंधित जानकारी ही प्रदान करते हैं।
-नीचे दिए गए उपयोगकर्ता के विवरण के आधार पर उन्हें भविष्यवाणी दें।
-उत्तर हमेशा हिंदी में दें, केवल 1–2 तार्किक पंक्तियों में और स्पष्ट रूप से बिंदुवार (•) फ़ॉर्मेट में लिखें।
-अगर प्रश्न ज्योतिष से संबंधित नहीं है, तो विनम्रतापूर्वक कहें:
-"माफ़ कीजिए, मैं केवल ज्योतिष से संबंधित प्रश्नों का उत्तर देता हूँ।"
+   const prompt = `
+Aap ek experienced Jyotishi ho aur sirf astrology se related info hi dete ho.  
+Niche diye gaye user details ke basis par unhe prediction do.  
+Answer hamesha Hinglish mein ho, sirf 1–2 logical lines mein aur clear bullet points (•) format mein likho.  
+Agar question astrology se related nahi hai, toh politely bolo:  
+"Sorry, main sirf astrology related questions ka answer deta hoon."
 
-उपयोगकर्ता विवरण:
-नाम: ${name}
-जन्म तिथि: ${dob}
-जन्म समय: ${birthTime}
-जन्म स्थान: ${birthPlace}
-प्रश्न: ${question}
+User Details:  
+Naam: ${name}  
+Janm Tithi: ${dob}  
+Janm Samay: ${birthTime}  
+Janm Sthaan: ${birthPlace}  
+Prashn: ${question}  
 
-कृपया उत्तर संक्षिप्त, तार्किक और उपयोगी रखें।
-    `;
+Kripya answer short, logical aur useful rakho.  
+`;
+
 
     const response = await client.chat.completions.create({
       model: "sonar-pro", // Faster model for <10s responses
       messages: [{ role: "user", content: prompt }],
-      temperature: 0.3, // lower temp for more logical answers
+      temperature: 0.5, // lower temp for more logical answers
       max_tokens: 150,  // short response for 1–2 lines
     });
 
