@@ -181,6 +181,14 @@ export default function AstroChat() {
               className="border p-2 flex-1 rounded"
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter"){
+                  e.preventDefault();
+                  sendMessage();
+                }
+              }}
+              
+
             />
             <button
               onClick={sendMessage}
