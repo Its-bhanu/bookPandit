@@ -19,6 +19,7 @@ const astrologyRoutes = require("./routes/astrology.routes")
 const predictionRoutes = require('./routes/astrology.routes')
 const chatRoutes = require('../Backend/routes/chat.routes');
 const { GoogleGenerativeAI } = require("@google/generative-ai")
+const statsRoutes = require('./routes/poojaBooks.routes')
 // console.log("heelo")
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
@@ -61,6 +62,7 @@ app.use("/api",ForgetPasswordRoutes);
 db=connectToDb();
 app.use('/api/payment',paymentRoutes);
 app.use("/api/astrology", astrologyRoutes);
+app.use('/api/stats', statsRoutes);
 
   
 module.exports=app;

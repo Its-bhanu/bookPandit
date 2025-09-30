@@ -6,6 +6,7 @@ import Achievements from "../components/Achievements";
 import Testimonials from "../components/Testimonials";
 import SkiperScrollText from "../components/SkiperScrollText";
 import FAQSection from "../components/FAQSection";
+import PanditBookingGraph from "../components/BookingGraph";
 
 
 
@@ -121,6 +122,8 @@ import FAQSection from "../components/FAQSection";
         </div>
       </section>
       <SkiperScrollText/>
+      
+      
      
      
 

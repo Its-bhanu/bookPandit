@@ -46,6 +46,11 @@ const poojaBookSchema = new mongoose.Schema({
         default: 'pending',
          enum: ['pending', 'confirmed', 'cancelled'],
     },
+    paymentStatus: {
+        type: String,
+        default: 'pending',
+         enum: ['pending', 'completed', 'failed'],
+    },
 });
 
 const PoojaBook = mongoose.model('PoojaBook', poojaBookSchema);

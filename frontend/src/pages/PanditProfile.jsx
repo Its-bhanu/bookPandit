@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-
+import PanditBookingGragh from "../components/BookingGraph";
 const PanditProfilesList = () => {
    const [pandits, setPandits] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -113,6 +113,9 @@ const [razorpayLoaded, setRazorpayLoaded] = useState(false);
           upi: true,
           emi: true,
         },
+         upi: {
+          flow: "collect", // Request UPI ID instead of intent
+        },
         handler: async function (response) {
           try {
            const verificationResponse= await axios.post("https://book-pandit-mmed.vercel.app/api/payment/verifyPayment", {
@@ -155,6 +158,7 @@ const [razorpayLoaded, setRazorpayLoaded] = useState(false);
         setProcessingPanditId(null);
       });
       rzp1.open();
+      
     } catch (error) {
       toast.error("Error processing booking and payment");
       setProcessingPayment(false);
@@ -205,6 +209,15 @@ const [razorpayLoaded, setRazorpayLoaded] = useState(false);
           >
             Find Your Perfect Pandit
           </motion.h1>
+
+           <p className="text-center text-gray-600 max-w-3xl mx-auto mb-10">
+          Welcome to our booking platform! Here you can connect with experienced 
+          and trusted Pandits for your spiritual and religious ceremonies. 
+          Each profile below provides details about their expertise, years of 
+          experience, and location to help you make an informed choice.  
+          <br />Select a Pandit that best fits your requirements and complete 
+          your booking in just a few clicks.
+        </p>
           
           <motion.p
             initial={{ opacity: 0 }}
@@ -355,7 +368,30 @@ const [razorpayLoaded, setRazorpayLoaded] = useState(false);
           </div>
         )}
       </div>
+ <div className="mt-16">
+        <h2 className="text-2xl font-semibold text-gray-800 text-center mb-4">
+          📊 Booking Trends
+        </h2>
+        <p className="text-center text-gray-600 mb-8 max-w-2xl mx-auto">
+          This graph shows which Pandits are most frequently booked and which 
+          ceremonies are most in demand. Use these insights to see what other 
+          users are booking.
+        </p>
+        <PanditBookingGragh />
+      </div>
+      {/* <PanditBookingGragh/> */}
+      <div className="mt-16 text-center">
+        <h3 className="text-xl font-bold text-gray-700 mb-2">
+          🙌 Book with Confidence
+        </h3>
+        <p className="text-gray-600 max-w-2xl mx-auto">
+          Every booking made here is secured with our trusted payment system, 
+          ensuring safety and transparency. Strengthen your spiritual journey 
+          by booking the right Pandit today and make your ceremony truly auspicious.
+        </p>
+      </div>
     </div>
+    
   );
 };
 

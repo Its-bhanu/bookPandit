@@ -19,6 +19,7 @@ import Forgetpasspandit from './pages/Forgetpasspandit';
 import AstroConsult from './pages/AstroConsult';
 import AiAstrologyForm from "./pages/aiAstrology";
 import ChatBox from "./pages/ChatPage";
+import PanditBookingGraph from "./components/BookingGraph"
 function App() {
   return (
     <BrowserRouter>
