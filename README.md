@@ -59,7 +59,7 @@ PanditBooking-main/
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/PanditBooking.git
+git clone https://github.com/Its-bhanu/bookPandit.git
 cd PanditBooking-main
 ```
 
@@ -207,3 +207,4 @@ For support or queries, contact:
 ## Credits
 
 Developed by Bhanu sharma
+
