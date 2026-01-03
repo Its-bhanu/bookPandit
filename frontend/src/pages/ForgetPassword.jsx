@@ -147,7 +147,7 @@ const ForgetPassword = () => {
 
         <p className="text-sm text-gray-600 mt-4 text-center">
           Remember your password?{" "}
-          <a href="/UserSignIn" className="text-blue-500 hover:underline">
+          <a href="https://book-pandit.vercel.app/UserSignIn" className="text-blue-500 hover:underline">
             Sign In
           </a>
         </p>
