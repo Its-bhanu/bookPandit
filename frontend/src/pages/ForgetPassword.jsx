@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -10,67 +11,101 @@ const ForgetPassword = () => {
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [resetSuccess, setResetSuccess] = useState(false);
+
   const navigate = useNavigate();
 
-  // Handle sending OTP
+  /* -----------------------------------
+     BLOCK BACK NAVIGATION AFTER RESET
+  ------------------------------------ */
+  useEffect(() => {
+    if (resetSuccess) {
+      window.history.pushState(null, "", window.location.href);
+
+      window.onpopstate = () => {
+        navigate("/UserSignIn", { replace: true });
+      };
+    }
+
+    return () => {
+      window.onpopstate = null;
+    };
+  }, [resetSuccess, navigate]);
+
+  /* -----------------------------------
+     SEND OTP
+  ------------------------------------ */
   const handleEmailSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+
     try {
-      const response = await axios.post(
+      const res = await axios.post(
         "https://book-pandit-mmed.vercel.app/api/user/forget-password",
         { email }
       );
-      toast.success(response.data.message || "OTP sent successfully!");
-      setStep(2); // Move to OTP step
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Error sending OTP!");
+
+      toast.success(res.data.message || "OTP sent successfully!");
+      setStep(2);
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to send OTP!");
     } finally {
       setLoading(false);
     }
   };
 
-  // Handle OTP verification
+  /* -----------------------------------
+     VERIFY OTP
+  ------------------------------------ */
   const handleOtpSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+
     try {
-      const response = await axios.post(
+      const res = await axios.post(
         "https://book-pandit-mmed.vercel.app/api/user/verify-otp",
         { email, otp }
       );
-      toast.success(response.data.message || "OTP verified!");
-      setStep(3); // Move to Reset Password step
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Invalid OTP!");
+
+      toast.success(res.data.message || "OTP verified!");
+      setStep(3);
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Invalid OTP!");
     } finally {
       setLoading(false);
     }
   };
 
-  // Handle Password Reset
+  /* -----------------------------------
+     RESET PASSWORD
+  ------------------------------------ */
   const handleResetPassword = async (e) => {
     e.preventDefault();
     setLoading(true);
+
     try {
-      const response = await axios.post(
+      const res = await axios.post(
         "https://book-pandit-mmed.vercel.app/api/user/reset-password",
         { email, otp, newPassword }
       );
 
-      toast.success(response.data.message || "Password reset successful!");
+      toast.success(res.data.message || "Password reset successful!");
+      setResetSuccess(true);
 
-      // ✅ navigate after success with delay so toast is visible
+      // 🔥 Replace history so back button won't return here
       setTimeout(() => {
-        navigate("/UserSignIn");
+        navigate("/UserSignIn", { replace: true });
       }, 1500);
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Error resetting password!");
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Reset failed!");
     } finally {
       setLoading(false);
     }
   };
 
+  /* -----------------------------------
+     UI
+  ------------------------------------ */
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
@@ -87,6 +122,7 @@ const ForgetPassword = () => {
           </div>
         )}
 
+        {/* STEP 1 */}
         {step === 1 && !loading && (
           <form onSubmit={handleEmailSubmit}>
             <input
@@ -94,18 +130,16 @@ const ForgetPassword = () => {
               placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full p-3 mb-4 border border-gray-300 rounded-lg"
+              className="w-full p-3 mb-4 border rounded-lg"
               required
             />
-            <button
-              type="submit"
-              className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-300"
-            >
+            <button className="w-full bg-blue-500 text-white py-2 rounded-lg">
               Send OTP
             </button>
           </form>
         )}
 
+        {/* STEP 2 */}
         {step === 2 && !loading && (
           <form onSubmit={handleOtpSubmit}>
             <input
@@ -113,18 +147,16 @@ const ForgetPassword = () => {
               placeholder="Enter OTP"
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
-              className="w-full p-3 mb-4 border border-gray-300 rounded-lg"
+              className="w-full p-3 mb-4 border rounded-lg"
               required
             />
-            <button
-              type="submit"
-              className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-300"
-            >
+            <button className="w-full bg-blue-500 text-white py-2 rounded-lg">
               Verify OTP
             </button>
           </form>
         )}
 
+        {/* STEP 3 */}
         {step === 3 && !loading && (
           <form onSubmit={handleResetPassword}>
             <input
@@ -132,28 +164,26 @@ const ForgetPassword = () => {
               placeholder="Enter new password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              className="w-full p-3 mb-4 border border-gray-300 rounded-lg"
+              className="w-full p-3 mb-4 border rounded-lg"
               required
               minLength={6}
             />
-            <button
-              type="submit"
-              className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-300"
-            >
+            <button className="w-full bg-blue-500 text-white py-2 rounded-lg">
               Reset Password
             </button>
           </form>
         )}
 
-        <p className="text-sm text-gray-600 mt-4 text-center">
-          Remember your password?{" "}
-          <a href="/UserSignIn" className="text-blue-500 hover:underline">
-            Sign In
-          </a>
-        </p>
+        {/* Login Link (disabled after success) */}
+        {!resetSuccess && (
+          <p className="text-sm text-gray-600 mt-4 text-center">
+            Remember your password?{" "}
+            <Link to='/UserSignIn'
+            className="text-blue-500 hover:underline">Sign In</Link>
+          </p>
+        )}
       </div>
 
-      {/* ✅ Toast Container */}
       <ToastContainer position="top-right" autoClose={3000} theme="colored" />
     </div>
   );

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -147,9 +148,13 @@ const ForgetPassword = () => {
 
         <p className="text-sm text-gray-600 mt-4 text-center">
           Remember your password?{" "}
-          <a href="/PanditSignIn" className="text-blue-500 hover:underline">
+          {/* <a href="/PanditSignIn" className="text-blue-500 hover:underline">
             Sign In
-          </a>
+          </a> */}
+          <Link to='/PanditSignIn'
+          className="text-blue-500 hover:underline"
+            >Sign In
+          </Link>
         </p>
       </div>
 
