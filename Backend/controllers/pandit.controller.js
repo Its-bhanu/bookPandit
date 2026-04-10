@@ -203,7 +203,6 @@ module.exports.getAllPandits = async (req, res) => {
 };
 module.exports.getBookingByUser=async(req,res)=>{
     try{
-<<<<<<< HEAD
         console.log("fetching pandit bookings:");
 
         let panditId = req.pandit?._id;
@@ -221,17 +220,6 @@ module.exports.getBookingByUser=async(req,res)=>{
             return res.status(404).json({ message: "Pandit not found" });
         }
 
-=======
-        console.log("fetching user bookings:");
-        const { token } = req.query;
-        const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-        console.log("djks")
-        console.log(decodedToken);
-        const userId = decodedToken._id;
-        
-        const pandit = await panditModel.findById(userId).populate('BookingId').exec();
-        console.log(pandit)
->>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
         res.status(200).json({
             data: pandit.BookingId
         });
@@ -286,11 +274,7 @@ module.exports.acceptBooking = async (req, res) => {
         if (!pandit) {  
             return res.status(404).json({ message: "Pandit not found" });
         }
-<<<<<<< HEAD
         booking.status = 'Accepted';
-=======
-        booking.status = 'accepted';
->>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
         booking.panditId = panditId;
         await booking.save();
 
@@ -354,11 +338,7 @@ module.exports.declineBooking = async (req, res) => {
             return res.status(404).json({ message: "Booking not found" });
         }
 
-<<<<<<< HEAD
         booking.status = 'Rejected';
-=======
-        booking.status = 'declined';
->>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
         await booking.save();
 
         if (!booking.email) {
