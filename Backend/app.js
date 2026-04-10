@@ -55,8 +55,12 @@ app.use(cors());
 app.use("/api/ai" , predictionRoutes)
 app.use('/api/users',userRoutes);
 app.use("/api/pandits",panditRoutes);
+<<<<<<< HEAD
 app.use("/api/booking",poojaRoutes);
 app.use("/api/bookings",poojaRoutes);
+=======
+app.use("/api/booking",poojaRoutes); 
+>>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
 app.use('/api/chat', chatRoutes);
 
 app.use("/api",ForgetPasswordRoutes);

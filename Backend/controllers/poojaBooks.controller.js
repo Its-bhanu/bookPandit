@@ -1,6 +1,7 @@
 const PoojaBook = require("../models/poojaBooks.model");
 const Pandit = require("../models/pandit.model");
 const User = require("../models/user.model");
+<<<<<<< HEAD
 const { sendEmail } = require('../services/email.service');
 
 const EXPIRY_MS = 3 * 60 * 1000;
@@ -41,6 +42,20 @@ module.exports.createBooking = async (req, res) => {
         const status = "Pending";
         // Validate input
         if (!name || !phoneNo || !poojaType || !date || !time || !address || !panditId || !userId) {
+=======
+
+
+
+
+module.exports.createBooking = async (req, res) => {
+    try {
+        const { name, phoneNo, poojaType, date, time, address } = req.body.formData;
+        const { panditId, userId } = req.body;
+
+        const status = "pending";
+        // Validate input
+        if (!name || !phoneNo || !poojaType || !date || !time || !address) {
+>>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
             return res.status(400).json({
                 success: false,
                 message: "All fields are required"
@@ -56,6 +71,7 @@ module.exports.createBooking = async (req, res) => {
             });
         }
 
+<<<<<<< HEAD
         const pandit = await Pandit.findById(panditId);
         if (!pandit) {
             return res.status(404).json({ success: false, message: "Pandit not found" });
@@ -66,6 +82,8 @@ module.exports.createBooking = async (req, res) => {
             return res.status(404).json({ success: false, message: "User not found" });
         }
 
+=======
+>>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
         // Create new booking
         const newBooking = new PoojaBook({
             name,
@@ -74,11 +92,17 @@ module.exports.createBooking = async (req, res) => {
             date,
             time,
             address,
+<<<<<<< HEAD
             message,
             panditId,
             userId,
             status,
             paymentStatus: 'Pending'
+=======
+            panditId,
+            userId,
+             status, 
+>>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
         });
 
         await newBooking.save();
@@ -92,6 +116,7 @@ module.exports.createBooking = async (req, res) => {
             $push: { BookingId: newBooking._id }
         });
 
+<<<<<<< HEAD
         if (pandit.email) {
             try {
                 await sendEmail(
@@ -104,6 +129,8 @@ module.exports.createBooking = async (req, res) => {
             }
         }
 
+=======
+>>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
        
 
         return res.status(201).json({
@@ -121,6 +148,7 @@ module.exports.createBooking = async (req, res) => {
         });
     }
 };
+<<<<<<< HEAD
 
 module.exports.getPanditBookings = async (req, res) => {
     try {
@@ -195,3 +223,5 @@ module.exports.updateBookingStatus = async (req, res) => {
         res.status(500).json({ success: false, message: "Error updating booking status" });
     }
 };
+=======
+>>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f

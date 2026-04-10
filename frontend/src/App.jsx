@@ -20,7 +20,10 @@ import AstroConsult from './pages/AstroConsult';
 import AiAstrologyForm from "./pages/aiAstrology";
 import ChatBox from "./pages/ChatPage";
 import PanditBookingGraph from "./components/BookingGraph"
+<<<<<<< HEAD
 import UserBookings from "./pages/UserBookings";
+=======
+>>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
 function App() {
   return (
     <BrowserRouter>
@@ -34,7 +37,10 @@ function App() {
         <Route path="/UserSignUp" element={<UserSignUp />} />
         <Route path="/poojaBooks" element={<PoojaBooks/>} />
         <Route path="/panditProfile" element={<PanditProfile />} />
+<<<<<<< HEAD
         <Route path="/user/bookings" element={<UserBookings />} />
+=======
+>>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
         <Route path="/vastuShastra" element={<VastuSastra />} />
         <Route path="/contactUs" element={<ContactUs />} />
         <Route path="/forgetPassword" element={<ForgetPassword />} />

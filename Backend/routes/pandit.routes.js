@@ -22,10 +22,22 @@ router.post('/login',[
     body('password').isLength({min:6}).withMessage('Password should be atleast 6 characters long')
 ],panditController.loginPandit);
 
+<<<<<<< HEAD
 router.get('/profile', authMiddleware.authpandit, panditController.getPanditProfile);
 router.get('/logout', authMiddleware.authpandit, panditController.logoutPandit);
 router.get('/AllProfiles',panditController.getAllPandits);
 router.get("/user/token", authMiddleware.authpandit, panditController.getBookingByUser)
+=======
+router.get('/profile',
+    [
+        body('token').not().isEmpty().withMessage('Token is required')
+    ]
+    ,
+    panditController.getPanditProfile,authMiddleware.authpandit);
+router.get('/logout',panditController.logoutPandit,authMiddleware.authpandit);
+router.get('/AllProfiles',panditController.getAllPandits);
+router.get("/user/token",panditController.getBookingByUser)
+>>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
 router.delete('/poojaBooks/:id',panditController.deleteBooking);
 // router.post('/poojaBooks/accept/:bookingid',panditController.acceptBooking,authMiddleware.authpandit);
 // router.put('/decline/:id',panditController.declineBooking);

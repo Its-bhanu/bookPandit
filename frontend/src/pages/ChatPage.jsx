@@ -1,13 +1,21 @@
 import React, { useState, useEffect } from "react";
+<<<<<<< HEAD
 import { useLocation, useParams } from "react-router-dom";
 import { io } from "socket.io-client";
 import axios from "axios";
 import { API_BASE, SOCKET_BASE } from "../config/api";
+=======
+import { useLocation } from "react-router-dom";
+import { io } from "socket.io-client";
+
+const BACKEND_URL = "https://book-pandit-mmed.vercel.app/"; // change to your backend URL
+>>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
 
 let socket;
 
 const ChatPage = () => {
   const { state } = useLocation();
+<<<<<<< HEAD
   const params = useParams();
   const roomId = state?.roomId || params.roomId || "";
   const fallbackIds = roomId.split("_");
@@ -19,11 +27,15 @@ const ChatPage = () => {
     role === "pandit"
       ? localStorage.getItem("panditsignintoken")
       : localStorage.getItem("userlogintoken");
+=======
+  const { roomId, userId, panditId } = state;
+>>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
 
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
+<<<<<<< HEAD
     const fetchMessages = async () => {
       if (!userId || !panditId || !token) return;
 
@@ -66,11 +78,23 @@ const ChatPage = () => {
 
     socket.on("chat_error", (data) => {
       console.error(data?.message || "Chat error");
+=======
+    socket = io(BACKEND_URL, { transports: ["websocket"] });
+
+    socket.on("connect", () => {
+      console.log("Connected:", socket.id);
+      socket.emit("join_room", roomId);
+    });
+
+    socket.on("receive_message", (data) => {
+      setMessages((prev) => [...prev, data]);
+>>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
     });
 
     return () => {
       socket.disconnect();
     };
+<<<<<<< HEAD
   }, [normalizedRoomId, userId, panditId]);
 
   const sendMessage = () => {
@@ -85,6 +109,20 @@ const ChatPage = () => {
         panditId
       };
       socket.emit("send_message", data);
+=======
+  }, [roomId]);
+
+  const sendMessage = () => {
+    if (message.trim() !== "") {
+      const data = {
+        room: roomId,
+        author: userId,
+        text: message,
+        time: new Date().toLocaleTimeString(),
+      };
+      socket.emit("send_message", data);
+      setMessages((prev) => [...prev, data]);
+>>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
       setMessage("");
     }
   };
@@ -96,6 +134,7 @@ const ChatPage = () => {
       <div className="flex-1 overflow-y-auto p-4 space-y-2 bg-gray-100">
         {messages.map((msg, idx) => (
           <div
+<<<<<<< HEAD
             key={msg._id || `${msg.senderId}-${msg.createdAt || idx}`}
             className={`p-2 rounded-lg max-w-xs ${
               msg.senderId === (role === "pandit" ? panditId : userId)
@@ -107,6 +146,15 @@ const ChatPage = () => {
             <small className="text-xs">
               {msg.createdAt ? new Date(msg.createdAt).toLocaleTimeString() : ""}
             </small>
+=======
+            key={idx}
+            className={`p-2 rounded-lg max-w-xs ${
+              msg.author === userId ? "bg-blue-500 text-white ml-auto" : "bg-gray-300"
+            }`}
+          >
+            <p>{msg.text}</p>
+            <small className="text-xs">{msg.time}</small>
+>>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
           </div>
         ))}
       </div>

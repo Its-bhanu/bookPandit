@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
+<<<<<<< HEAD
 import { useNavigate } from "react-router-dom";
+=======
+>>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
 import { motion } from "framer-motion";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -7,10 +10,16 @@ import axios from "axios";
 import "swiper/css/pagination";
 import { Pagination, Autoplay } from "swiper/modules";
 import { FaBars, FaTimes, FaCommentDots, FaPaperPlane, FaTimesCircle } from "react-icons/fa";
+<<<<<<< HEAD
 import { API_BASE } from "../config/api";
 
 const PanditHomePage = () => {
   const [bookings, setBookings] = useState([]);
+=======
+
+const PanditHomePage = () => {
+  const [users, setUsers] = useState([]);
+>>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [message, setMessage] = useState("");
@@ -18,12 +27,16 @@ const PanditHomePage = () => {
     { text: "Here Pandit Can chat with users in real time", sender: "bot" },
   ]);
   const token = localStorage.getItem("panditsignintoken");
+<<<<<<< HEAD
   const [now, setNow] = useState(Date.now());
   const navigate = useNavigate();
+=======
+>>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
 
   useEffect(() => {
     if (!token) return;
 
+<<<<<<< HEAD
     const fetchBookings = async () => {
       try {
         const response = await axios.get(
@@ -78,6 +91,38 @@ const PanditHomePage = () => {
     return `${minutes}:${seconds}`;
   };
 
+=======
+    const fetchUsers = async () => {
+      try {
+        const response = await axios.get(
+          `https://book-pandit-mmed.vercel.app/api/pandits/user/token?token=${token}`
+        );
+        setUsers(response.data?.data || []);
+      } catch (error) {
+        console.error("Error fetching pandit profiles", error);
+      }
+    };
+
+    fetchUsers();
+  }, [token]);
+
+ 
+  
+
+  const handleDeleteBooking = async (bookingId) => {
+    try {
+      await axios.delete(
+        `https://book-pandit-mmed.vercel.app/api/pandits/poojaBooks/${bookingId}`
+      );
+      setUsers((prev) => prev.filter((user) => user._id !== bookingId));
+      alert("Booking deleted successfully");
+    } catch (error) {
+      console.error("Error deleting booking", error);
+      alert("Failed to delete booking.");
+    }
+  };
+
+>>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);
   const toggleChat = () => setIsChatOpen((prev) => !prev);
 
@@ -102,6 +147,7 @@ const PanditHomePage = () => {
     if (e.key === "Enter") handleSendMessage();
   };
 
+<<<<<<< HEAD
   const normalizeStatus = (status) => {
     if (!status) return "Pending";
     const lower = status.toLowerCase();
@@ -119,6 +165,8 @@ const PanditHomePage = () => {
     (booking) => normalizeStatus(booking.status) === "Accepted"
   );
 
+=======
+>>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
   return (
     <div className="min-h-screen bg-gray-100 relative">
       {/* Chat Icon */}
@@ -255,6 +303,7 @@ const PanditHomePage = () => {
         </p>
       </motion.section>
 
+<<<<<<< HEAD
       {/* Booking Requests */}
       <section className="py-12 px-4 md:px-8">
         <h3 className="text-3xl font-bold text-gray-800 text-center mb-6">📬 Booking Requests</h3>
@@ -301,19 +350,29 @@ const PanditHomePage = () => {
         </div>
       </section>
 
+=======
+>>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
       {/* Upcoming Bookings */}
       <section className="py-12 px-4 md:px-8">
         <h3 className="text-3xl font-bold text-gray-800 text-center mb-6">📅 Upcoming Bookings</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+<<<<<<< HEAD
           {acceptedBookings.length > 0 ? (
             acceptedBookings.map((booking, index) => (
               <motion.div
                 key={booking._id || index}
+=======
+          {users.length > 0 ? (
+            users.map((user, index) => (
+              <motion.div
+                key={user._id || index}
+>>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 className="bg-white shadow-md rounded-xl p-5 hover:shadow-lg transition"
               >
+<<<<<<< HEAD
                 <h4 className="text-lg font-semibold text-gray-800">{booking.poojaType}</h4>
                 <p className="text-gray-600">Name: {booking.name}</p>
                 <p className="text-gray-600">Date: {booking.date}</p>
@@ -336,11 +395,30 @@ const PanditHomePage = () => {
                   }
                 >
                   Chat Now
+=======
+                <h4 className="text-lg font-semibold text-gray-800">{user.poojaType}</h4>
+                <p className="text-gray-600">Name: {user.name}</p>
+                <p className="text-gray-600">Date: {user.date}</p>
+                <p className="text-gray-600">Location: {user.address}</p>
+                <p className="text-gray-600">Time: {user.time}</p>
+                <p className="text-gray-600">Phone No: {user.phoneNo}</p>
+                <p className="text-gray-600">BookingStatus: {user.status}</p>
+
+                <button
+                  className="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                  onClick={() => handleDeleteBooking(user._id)}
+                >
+                  Delete Booking
+>>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
                 </button>
               </motion.div>
             ))
           ) : (
+<<<<<<< HEAD
             <p className="text-center text-gray-500 col-span-full">No upcoming bookings.</p>
+=======
+            <p className="text-center text-gray-500 col-span-full">No bookings available.</p>
+>>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
           )}
         </div>
       </section>

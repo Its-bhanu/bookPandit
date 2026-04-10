@@ -4,7 +4,10 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Header from "../components/Header";
+<<<<<<< HEAD
 import { API_BASE } from "../config/api";
+=======
+>>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
 const PanditSignup = () => {
   const navigate = useNavigate();
 
@@ -35,7 +38,11 @@ const PanditSignup = () => {
     setLoadingSignup(true);
     try {
       const response = await axios.post(
+<<<<<<< HEAD
         `${API_BASE}/api/pandits/register`,
+=======
+        " https://book-pandit-mmed.vercel.app/api/pandits/register",
+>>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
         formData
       );
       setUserId(response.data.userId);
@@ -52,12 +59,20 @@ const PanditSignup = () => {
     e.preventDefault();
     setLoadingOtp(true);
     try {
+<<<<<<< HEAD
       await axios.post(`${API_BASE}/api/pandits/verify-otp`, {
+=======
+      await axios.post(" https://book-pandit-mmed.vercel.app/api/pandits/verify-otp", {
+>>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
         userId,
         otp,
       });
       toast.success("Signup successful! Redirecting...");
+<<<<<<< HEAD
       setTimeout(() => navigate("/PanditSignIn"), 2000);
+=======
+      setTimeout(() => navigate("/PanditSignin"), 2000);
+>>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
     } catch (error) {
       toast.error(error.response?.data?.message || "Invalid OTP.");
     } finally {

@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+<<<<<<< HEAD
 import { API_BASE } from "../config/api";
+=======
+>>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
 
 export default function AstroChat() {
   const [step, setStep] = useState(0); // 0: Name, 1: DOB, 2: Time, 3: Place, 4: Chat
@@ -71,7 +74,11 @@ export default function AstroChat() {
     setLoading(true);
 
     try {
+<<<<<<< HEAD
       const res = await axios.post(`${API_BASE}/api/ai/predict`, {
+=======
+      const res = await axios.post("https://book-pandit-mmed.vercel.app/api/ai/predict", {
+>>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
         name,
         dob,
         birthTime,

@@ -71,14 +71,22 @@ module.exports.registerUser = async (req, res, next) => {
         console.log("OTP email sent successfully");
 
         console.log("Hashing password...");
+<<<<<<< HEAD
         const hashedPassword = await userModel.hashPassword(password);
+=======
+        // const hashedPassword = await userModel.hashPassword(password);
+>>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
 
         console.log("Creating user...");
         // console
         const user = await userService.createUser({
             username,
             email,
+<<<<<<< HEAD
             password: hashedPassword,
+=======
+            password,
+>>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
             otp,
             otpExpires: otpExpires
         });
@@ -151,10 +159,14 @@ module.exports.loginUser = async (req, res, next) => {
 
         res.cookie('token', token);
 
+<<<<<<< HEAD
         const safeUser = user.toObject();
         delete safeUser.password;
 
         res.status(200).json({ token, user: safeUser });
+=======
+        res.status(200).json({ token, user });
+>>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
     } catch (error) {
         console.error("❌ Error logging in:", error);
         res.status(500).json({ message: "Internal Server Error" });

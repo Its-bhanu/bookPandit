@@ -37,7 +37,11 @@ const ThankYouPage = () => {
         >
           🎉 Thank You!
         </motion.h2>
+<<<<<<< HEAD
         <p className="text-gray-700 text-lg">Your booking has been successfully confirmed.</p>
+=======
+        {/* <p className="text-gray-700 text-lg">Your booking has been successfully confirmed.</p> */}
+>>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
         <p className="text-gray-600 mt-2">We appreciate your trust in our services.</p>
 
         {submitted ? (

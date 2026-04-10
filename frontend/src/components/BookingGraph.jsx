@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import React from "react";
+<<<<<<< HEAD
 import { API_BASE } from "../config/api";
+=======
+>>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer, LabelList
 } from "recharts";
@@ -25,7 +28,11 @@ export default function PanditBookingGraph() {
   const [data, setData] = useState([]);
 
   useEffect(() => {
+<<<<<<< HEAD
     axios.get(`${API_BASE}/api/stats/most-booked-pandits`)
+=======
+    axios.get("https://book-pandit-mmed.vercel.app/api/stats/most-booked-pandits")
+>>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
       .then(res => setData(res.data))
       .catch(err => console.error(err));
   }, []);

@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import Header from "../components/Header";
+<<<<<<< HEAD
 import { Link } from "react-router-dom";
+=======
+>>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
 
 /* Compass Directions */
 const directions = [
@@ -190,6 +193,7 @@ const vastuData = {
   },
 };
 
+<<<<<<< HEAD
 const overviewCards = [
   {
     title: "What Is Vastu Shastra?",
@@ -232,6 +236,8 @@ const quickChecklist = [
   "Use lighter colors in East and North",
 ];
 
+=======
+>>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
 const VastuSastra = () => {
   const [selectedDirection, setSelectedDirection] = useState("North");
   const data = vastuData[selectedDirection];
@@ -256,6 +262,7 @@ const VastuSastra = () => {
           </p>
         </motion.div>
 
+<<<<<<< HEAD
         {/* OVERVIEW */}
         <section className="mt-16">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
@@ -272,6 +279,8 @@ const VastuSastra = () => {
           </div>
         </section>
 
+=======
+>>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
         {/* COMPASS */}
         <section className="mt-20 text-center">
           <h2 className="text-3xl font-bold text-yellow-800">
@@ -331,6 +340,7 @@ const VastuSastra = () => {
           </div>
         </section>
 
+<<<<<<< HEAD
         {/* ELEMENTS */}
         <section className="mt-20">
           <h2 className="text-3xl font-bold text-yellow-800 text-center mb-10">
@@ -349,6 +359,8 @@ const VastuSastra = () => {
           </div>
         </section>
 
+=======
+>>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
         {/* DO & DON'T */}
         <section className="mt-20 grid grid-cols-1 md:grid-cols-2 gap-10 max-w-5xl mx-auto">
           <div>
@@ -390,6 +402,7 @@ const VastuSastra = () => {
           </div>
         </section>
 
+<<<<<<< HEAD
         {/* CHECKLIST + COMMON ISSUES */}
         <section className="mt-20 max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10">
           <div className="bg-white/70 border border-yellow-200 rounded-2xl p-6 shadow-lg">
@@ -431,6 +444,8 @@ const VastuSastra = () => {
           </div>
         </section>
 
+=======
+>>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
       </div>
     </div>
   );
