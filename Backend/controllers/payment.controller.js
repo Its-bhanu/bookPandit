@@ -66,7 +66,6 @@ module.exports.createOrder = async (req, res) => {
       return res.status(400).json({ error: "Booking ID and amount are required" });
     }
 
-<<<<<<< HEAD
     const booking = await Booking.findById(bookingId);
     if (!booking) {
       return res.status(404).json({ error: "Booking not found" });
@@ -85,8 +84,6 @@ module.exports.createOrder = async (req, res) => {
       return res.status(400).json({ error: "Payment already completed" });
     }
 
-=======
->>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
     const options = {
       amount: amount,
       currency: 'INR',
@@ -162,11 +159,7 @@ module.exports.verifyPayment = async (req, res) => {
     // Update booking
     const updatedBooking = await Booking.findByIdAndUpdate(
       bookingId,
-<<<<<<< HEAD
       { paymentStatus: 'Completed' },
-=======
-      { status: 'confirmed', paymentStatus: 'completed' },
->>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
       { new: true }
     )
      

@@ -4,10 +4,7 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Header from "../components/Header";
-<<<<<<< HEAD
 import { API_BASE } from "../config/api";
-=======
->>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
 
 const UserSignUp = () => {
     const [formData, setFormData] = useState({
@@ -38,11 +35,7 @@ const UserSignUp = () => {
         setLoading(true); // Start loader
 
         try {
-<<<<<<< HEAD
             const response = await axios.post(`${API_BASE}/api/users/register`, formData, {
-=======
-            const response = await axios.post(" https://book-pandit-mmed.vercel.app/api/users/register", formData, {
->>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
                 headers: { "Content-Type": "application/json" }
             });
 
@@ -66,11 +59,7 @@ const UserSignUp = () => {
         setOtpLoading(true); // Start loader
 
         try {
-<<<<<<< HEAD
             const response = await axios.post(`${API_BASE}/api/users/verify-otp`, {
-=======
-            const response = await axios.post(" https://book-pandit-mmed.vercel.app/api/users/verify-otp", {
->>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
                 email: formData.email,
                 otp
             });

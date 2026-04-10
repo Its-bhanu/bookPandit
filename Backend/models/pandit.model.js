@@ -73,11 +73,7 @@ const panditSchema = new mongoose.Schema({
 
 
 panditSchema.methods.generateAuthToken=function(){
-<<<<<<< HEAD
     const token=jwt.sign({ userId: this._id, role: 'pandit' },process.env.JWT_SECRET,{expiresIn:'24h'});
-=======
-    const token=jwt.sign({_id:this._id},process.env.JWT_SECRET,{expiresIn:'24h'});
->>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
     return token;
 }
 panditSchema.methods.comparePassword=async function(Password){

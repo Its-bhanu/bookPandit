@@ -4,12 +4,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { FaSearch, FaStar, FaRegStar } from "react-icons/fa";
 import { jwtDecode } from "jwt-decode";
-<<<<<<< HEAD
 import { API_BASE } from "../config/api";
-=======
-
-const BACKEND_URL = "https://your-backend-host.com"; // change to your backend's URL
->>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
 
 const AstroConsult = () => {
   const [message, setMessage] = useState("");
@@ -31,13 +26,7 @@ const AstroConsult = () => {
     const fetchAstrologers = async () => {
       try {
         setIsLoading(true);
-<<<<<<< HEAD
         const response = await axios.get(`${API_BASE}/api/pandits/AllProfiles`);
-=======
-        const response = await axios.get(
-          "https://book-pandit-mmed.vercel.app/api/pandits/AllProfiles"
-        );
->>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
         const dataArray = Array.isArray(response.data)
           ? response.data
           : [response.data];
@@ -65,24 +54,17 @@ const AstroConsult = () => {
     const token = localStorage.getItem("userlogintoken");
     if (token) {
       const decode = jwtDecode(token);
-<<<<<<< HEAD
       setUserId(decode.userId || decode._id);
-=======
-      setUserId(decode._id);
->>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
     } else {
       console.log("No token found");
     }
   }, []);
 
   const handleChatWithPandit = (panditId) => {
-<<<<<<< HEAD
     if (!userId) {
       navigate("/UserSignIn", { state: { redirectTo: "/AstroConsult" } });
       return;
     }
-=======
->>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
     const roomId = `${userId}_${panditId}`;
     navigate(`/panditChat/${roomId}`, {
       state: { panditId, userId, roomId },

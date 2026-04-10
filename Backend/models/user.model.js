@@ -38,7 +38,6 @@ const userSchema= new mongoose.Schema({
     resetPasswordExpires:{
         type:Date,
     }
-<<<<<<< HEAD
     ,
     BookingId: [
         {
@@ -50,12 +49,6 @@ const userSchema= new mongoose.Schema({
 
 userSchema.methods.generateAuthToken=function(){
     const token=jwt.sign({ userId: this._id, role: 'user' },process.env.JWT_SECRET,{expiresIn:'24h'});
-=======
-})
-
-userSchema.methods.generateAuthToken=function(){
-    const token=jwt.sign({_id:this._id},process.env.JWT_SECRET,{expiresIn:'24h'});
->>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
     return token;
 }
 userSchema.methods.comparePassword=async function(Password){

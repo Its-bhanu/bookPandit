@@ -4,10 +4,7 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Header from "../components/Header"; // Importing Header component
-<<<<<<< HEAD
 import { API_BASE } from "../config/api";
-=======
->>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
 const Signin = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
@@ -27,11 +24,7 @@ const Signin = () => {
 
     try {
       const response = await axios.post(
-<<<<<<< HEAD
         `${API_BASE}/api/pandits/login`,
-=======
-        " https://book-pandit-mmed.vercel.app/api/pandits/login",
->>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
         formData
       );
       localStorage.setItem("panditsignintoken", response.data.token);

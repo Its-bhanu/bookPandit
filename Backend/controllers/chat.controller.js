@@ -1,5 +1,4 @@
 const Message = require('../models/Message.model');
-<<<<<<< HEAD
 const Booking = require('../models/poojaBooks.model');
 
 const isChatAllowed = async (userId, panditId) => {
@@ -39,15 +38,3 @@ const getMessages = async (req, res) => {
 };
 
 module.exports = { getMessages, isChatAllowed };
-=======
-
- const getMessages = async (req, res) => {
-  const { userId, panditId } = req.params;
-   const roomA = `${userId}_${panditId}`;
-  const roomB = `${panditId}_${userId}`;
- 
-  const msgs = await Message.find({ room: { $in: [roomA, roomB] } }).sort({ createdAt: 1 });
-  res.json(msgs);
-};
-module.exports = {getMessages};
->>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f

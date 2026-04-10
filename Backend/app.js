@@ -28,39 +28,13 @@ app.use(cors({
     origin: '*'
 }));
 app.use(cors()); 
-// const server = http.createServer(app);
-// const io = new Server(server, {
-//   cors: {
-//     origin: "http://localhost:5173", // or your frontend URL in production
-//     methods: ["GET", "POST"]
-//   }
-// });
-// io.on("connection", (socket) => {
-//   console.log("User connected:", socket.id);
 
-//   socket.on("join_room", (room) => {
-//     socket.join(room);
-//     console.log(`User ${socket.id} joined room ${room}`);
-//   });
-
-//   socket.on("send_message", (data) => {
-//     io.to(data.room).emit("receive_message", data);
-//   });
-
-//   socket.on("disconnect", () => {
-//     console.log("User disconnected:", socket.id);
-//   });
-// });
 
 app.use("/api/ai" , predictionRoutes)
 app.use('/api/users',userRoutes);
 app.use("/api/pandits",panditRoutes);
-<<<<<<< HEAD
 app.use("/api/booking",poojaRoutes);
 app.use("/api/bookings",poojaRoutes);
-=======
-app.use("/api/booking",poojaRoutes); 
->>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
 app.use('/api/chat', chatRoutes);
 
 app.use("/api",ForgetPasswordRoutes);

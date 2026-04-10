@@ -4,10 +4,7 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-<<<<<<< HEAD
 import { API_BASE } from "../config/api";
-=======
->>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
 
 const ForgetPassword = () => {
   const [step, setStep] = useState(1); // 1: Email, 2: OTP, 3: Reset Password
@@ -23,11 +20,7 @@ const ForgetPassword = () => {
     setLoading(true);
     try {
       const response = await axios.post(
-<<<<<<< HEAD
         `${API_BASE}/api/pandit/forget-password`,
-=======
-        "https://book-pandit-mmed.vercel.app/api/pandit/forget-password",
->>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
         { email }
       );
       toast.success(response.data.message || "OTP sent successfully!");
@@ -45,11 +38,7 @@ const ForgetPassword = () => {
     setLoading(true);
     try {
       const response = await axios.post(
-<<<<<<< HEAD
         `${API_BASE}/api/pandit/verify-otp`,
-=======
-        "https://book-pandit-mmed.vercel.app/api/pandit/verify-otp",
->>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
         { email, otp }
       );
       toast.success(response.data.message || "OTP verified!");
@@ -67,11 +56,7 @@ const ForgetPassword = () => {
     setLoading(true);
     try {
       const response = await axios.post(
-<<<<<<< HEAD
         `${API_BASE}/api/pandit/reset-password`,
-=======
-        "https://book-pandit-mmed.vercel.app/api/pandit/reset-password",
->>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
         { email, otp, newPassword }
       );
       toast.success(response.data.message || "Password reset successfully!");

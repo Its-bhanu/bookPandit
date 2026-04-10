@@ -4,10 +4,7 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-<<<<<<< HEAD
 import { API_BASE } from "../config/api";
-=======
->>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
 
 const ForgetPassword = () => {
   const [step, setStep] = useState(1); // 1: Email, 2: OTP, 3: Reset Password
@@ -45,11 +42,7 @@ const ForgetPassword = () => {
 
     try {
       const res = await axios.post(
-<<<<<<< HEAD
         `${API_BASE}/api/user/forget-password`,
-=======
-        "https://book-pandit-mmed.vercel.app/api/user/forget-password",
->>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
         { email }
       );
 
@@ -71,11 +64,7 @@ const ForgetPassword = () => {
 
     try {
       const res = await axios.post(
-<<<<<<< HEAD
         `${API_BASE}/api/user/verify-otp`,
-=======
-        "https://book-pandit-mmed.vercel.app/api/user/verify-otp",
->>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
         { email, otp }
       );
 
@@ -97,11 +86,7 @@ const ForgetPassword = () => {
 
     try {
       const res = await axios.post(
-<<<<<<< HEAD
         `${API_BASE}/api/user/reset-password`,
-=======
-        "https://book-pandit-mmed.vercel.app/api/user/reset-password",
->>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
         { email, otp, newPassword }
       );
 

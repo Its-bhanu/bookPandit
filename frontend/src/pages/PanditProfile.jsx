@@ -5,10 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import PanditBookingGragh from "../components/BookingGraph";
-<<<<<<< HEAD
 import { API_BASE } from "../config/api";
-=======
->>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
 const PanditProfilesList = () => {
    const [pandits, setPandits] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -17,48 +14,21 @@ const PanditProfilesList = () => {
   const [processingPanditId, setProcessingPanditId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedExpertise, setSelectedExpertise] = useState("all");
-<<<<<<< HEAD
   const userToken = localStorage.getItem("userlogintoken");
-=======
-const [razorpayLoaded, setRazorpayLoaded] = useState(false);
->>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
   const navigate = useNavigate();
   const location = useLocation();
   const formData = location.state?.formData || {};
 
-<<<<<<< HEAD
   useEffect(() => {
     if (!userToken) {
       toast.info("Please sign in to book a pandit.");
     }
   }, [userToken]);
-=======
- useEffect(() => {
-  if (window.Razorpay) {
-    setRazorpayLoaded(true);
-    return;
-  }
-
-  const script = document.createElement("script");
-  script.src = "https://checkout.razorpay.com/v1/checkout.js";
-  script.async = true;
-  script.onload = () => {
-      setRazorpayLoaded(true);
-      toast.success("Payment system loaded successfully");
-    };
-  script.onerror = () => toast.error("Failed to load payment system");
-  document.body.appendChild(script);
-}, []);
->>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
 
   useEffect(() => {
     const fetchPandits = async () => {
       try {
-<<<<<<< HEAD
         const response = await axios.get(`${API_BASE}/api/pandits/AllProfiles`);
-=======
-        const response = await axios.get("https://book-pandit-mmed.vercel.app/api/pandits/AllProfiles");
->>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
         const panditonly=response.data.filter(pandit=>{
           const expertise = pandit.expertise ?.toLowerCase() || "";
            return (expertise.includes('pandit')) 
@@ -78,14 +48,9 @@ const [razorpayLoaded, setRazorpayLoaded] = useState(false);
   }, []);
 
    const handleBooking = async (panditId) => {
-<<<<<<< HEAD
     if (!userToken) {
       toast.error("Please sign in to book a pandit.");
       navigate("/UserSignIn");
-=======
-     if (!razorpayLoaded) {
-      toast.error("Payment system is still loading. Please wait...");
->>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
       return;
     }
 
@@ -93,7 +58,6 @@ const [razorpayLoaded, setRazorpayLoaded] = useState(false);
     setProcessingPanditId(panditId);
     try {
       const bookingResponse = await axios.post(
-<<<<<<< HEAD
         `${API_BASE}/api/booking/poojaBooks`,
         { formData, panditId },
         { headers: { Authorization: `Bearer ${userToken}` } }
@@ -102,106 +66,12 @@ const [razorpayLoaded, setRazorpayLoaded] = useState(false);
       const bookingId = bookingResponse.data.booking?._id;
       toast.success("Booking request sent. Await pandit response.");
       navigate("/user/bookings", { state: { bookingId } });
-=======
-        "https://book-pandit-mmed.vercel.app/api/booking/poojaBooks", 
-        { formData, panditId }
-      );
-      const bookingId = bookingResponse.data.booking._id;
-      // toast.success("Pooja booking created successfully!");
-      await handlePayment(bookingId);
->>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
     } catch (error) {
       console.error('Error during booking:', error.response ? error.response.data : error.message);
       toast.error(error.response?.data?.message || "Error processing booking");
       setProcessingPayment(false);
       setProcessingPanditId(null);
-<<<<<<< HEAD
     } finally {
-=======
-    }
-  };
-   const handlePayment = async (bookingId) => {
-    try {
-      const amount =2100;
-      
-      const paymentResponse = await axios.post(
-        "https://book-pandit-mmed.vercel.app/api/payment/createOrder", 
-        { bookingId, amount }
-      );
-      // navigate("/feedback");
-      if (!paymentResponse.data.order?.id) {
-      throw new Error("Invalid order response");
-    }
-
-      
-
-      const { id , amount:orderAmount} = paymentResponse.data.order;
-       if (!id) throw new Error("Invalid order response");
-      console.log(paymentResponse.data);
-
-      const options = {
-        key: "rzp_test_35KFJrJBiuoMh3",
-        amount:orderAmount,
-        currency: "INR",
-        name: "Pandit Booking",
-        description: "Book a Pandit for your ceremony",
-        order_id: id,
-        method:{
-          netbanking: true,
-          card: true,
-          wallet: true,
-          upi: true,
-          emi: true,
-        },
-         upi: {
-          flow: "collect", // Request UPI ID instead of intent
-        },
-        handler: async function (response) {
-          try {
-           const verificationResponse= await axios.post("https://book-pandit-mmed.vercel.app/api/payment/verifyPayment", {
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_signature: response.razorpay_signature,
-              bookingId,
-            });
-
-            if (verificationResponse.data.success) {
-              toast.success("Payment verified successfully!");
-              navigate("/feedback");
-              toast.success("Payment successful! Pandit booked successfully.");
-            } else {
-                toast.error("Payment verification failed. Please contact support.");
-          }
-          } catch (error) {
-            toast.error(error.response?.data?.message || "Payment verification failed.");
-          } finally {
-            setProcessingPayment(false);
-            setProcessingPanditId(null);
-          }
-        },
-        prefill: {
-          name: formData.name || "",
-          email: formData.email || "",
-          contact: formData.phoneNo || "",
-        },
-        notes: {
-          bookingId: bookingId
-        },
-        theme: { color: "#3399cc" },
-      };
-      
-      const rzp1 = new window.Razorpay(options);
-
-      rzp1.on('payment.failed', function (response) {
-        toast.error(`Payment failed: ${response.error.description}`);
-        setProcessingPayment(false);
-        setProcessingPanditId(null);
-      });
-      rzp1.open();
-      
-    } catch (error) {
-      toast.error("Error processing booking and payment");
->>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
       setProcessingPayment(false);
       setProcessingPanditId(null);
     }
@@ -387,11 +257,7 @@ const [razorpayLoaded, setRazorpayLoaded] = useState(false);
                           Processing...
                         </>
                       ) : (
-<<<<<<< HEAD
                         "Request Booking"
-=======
-                        "Pay & Book Now"
->>>>>>> c8a339196acd05b09cbbae7dcfb707bfe754784f
                       )}
                     </button>
                     
