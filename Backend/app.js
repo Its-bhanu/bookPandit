@@ -25,9 +25,13 @@ app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.use(cookieparser())
 app.use(cors({
-    origin: '*'
+  origin: [
+    "http://localhost:5173",
+    "https://book-pandit.vercel.app"
+  ],
+  credentials: true,   
 }));
-app.use(cors()); 
+// app.use(cors()); 
 
 
 app.use("/api/ai" , predictionRoutes)
