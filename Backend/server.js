@@ -8,8 +8,14 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
     cors: {
-        origin: '*',
-        methods: ['GET', 'POST']
+        origin: [
+            'http://localhost:5173',
+            'http://localhost:3000',
+            'https://book-pandit.vercel.app',
+            'https://bookpandit-2.onrender.com'
+        ],
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+        credentials: true
     }
 });
 
