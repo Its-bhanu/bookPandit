@@ -61,6 +61,28 @@ const poojaBookSchema = new mongoose.Schema({
         default: 'Pending',
         enum: ['Pending', 'Completed', 'Failed', 'pending', 'completed', 'failed'],
     },
+    rating: {
+        type: Number,
+        min: 0,
+        max: 5,
+        default: null
+    },
+    feedback: {
+        type: String,
+        default: null
+    },
+    reviewSubmittedAt: {
+        type: Date,
+        default: null
+    },
+    decisionToken: {
+        type: String,
+        default: null
+    },
+    tokenExpiresAt: {
+        type: Date,
+        default: null
+    },
 }, { timestamps: true });
 
 const PoojaBook = mongoose.model('PoojaBook', poojaBookSchema);

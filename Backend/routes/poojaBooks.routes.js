@@ -8,6 +8,9 @@ router.post('/poojaBooks', authMiddleware.authUser, poojaBooksController.createB
 router.get('/pandit/requests', authMiddleware.authpandit, poojaBooksController.getPanditBookings);
 router.get('/user', authMiddleware.authUser, poojaBooksController.getUserBookings);
 router.put('/:id/status', authMiddleware.authpandit, poojaBooksController.updateBookingStatus);
+router.post('/:bookingId/feedback', authMiddleware.authUser, poojaBooksController.submitFeedback);
 router.get('/most-booked-pandits', getPanditStats);
+// Email decision endpoints (no auth needed - token is in URL)
+router.get('/:bookingId/decision/:decision', poojaBooksController.handleBookingDecisionFromEmail);
 
 module.exports=router;

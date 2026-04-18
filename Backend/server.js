@@ -15,6 +15,9 @@ const io = new Server(server, {
 
 socketHandler(io);
 
+// Make io accessible to routes via req.app.get('io')
+app.set('io', io);
+
 server.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });

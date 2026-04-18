@@ -28,6 +28,9 @@ const Signin = () => {
         formData
       );
       localStorage.setItem("panditsignintoken", response.data.token);
+      if (response.data.pandit && response.data.pandit._id) {
+        localStorage.setItem("panditId", response.data.pandit._id);
+      }
       toast.success("Sign-in successful!");
       navigate("/panditHome");
     } catch (error) {

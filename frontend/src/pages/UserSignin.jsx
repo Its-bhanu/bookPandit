@@ -39,6 +39,9 @@ const UserSignIn = () => {
 
       if (response.data.token) {
         localStorage.setItem("userlogintoken", response.data.token);
+        if (response.data.user && response.data.user._id) {
+          localStorage.setItem("userId", response.data.user._id);
+        }
         toast.success("Sign-in successful!");
         navigate("/poojaBooks");
       } else {

@@ -15,7 +15,7 @@ const SorryPage = () => {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-rose-50 to-orange-100 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-yellow-50 to-orange-100 px-4">
       <div className="bg-white shadow-xl rounded-2xl p-8 max-w-md text-center">
         <h1 className="text-3xl font-extrabold text-rose-600">Sorry</h1>
         <p className="mt-4 text-gray-700 text-lg">{message}</p>

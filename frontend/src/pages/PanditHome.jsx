@@ -4,10 +4,12 @@ import { motion } from "framer-motion";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import axios from "axios";
+import { io } from "socket.io-client";
 import "swiper/css/pagination";
 import { Pagination, Autoplay } from "swiper/modules";
 import { FaBars, FaTimes, FaCommentDots, FaPaperPlane, FaTimesCircle } from "react-icons/fa";
-import { API_BASE } from "../config/api";
+import { API_BASE, SOCKET_BASE } from "../config/api";
+import BookingNotificationPopup from "../components/BookingNotificationPopup";
 
 const PanditHomePage = () => {
   const [bookings, setBookings] = useState([]);
@@ -17,10 +19,52 @@ const PanditHomePage = () => {
   const [messages, setMessages] = useState([
     { text: "Here Pandit Can chat with users in real time", sender: "bot" },
   ]);
+  const [socket, setSocket] = useState(null);
+  const [showNotificationPopup, setShowNotificationPopup] = useState(false);
+  const [currentBooking, setCurrentBooking] = useState(null);
+  
   const token = localStorage.getItem("panditsignintoken");
+  const panditId = localStorage.getItem("panditId");
   const [now, setNow] = useState(Date.now());
   const navigate = useNavigate();
 
+  // Initialize Socket Connection
+  useEffect(() => {
+    if (!token || !panditId) return;
+
+    const newSocket = io(SOCKET_BASE, {
+      transports: ["websocket"],
+      reconnection: true,
+      reconnectionDelay: 1000,
+      reconnectionDelayMax: 5000,
+      reconnectionAttempts: 5,
+    });
+
+    newSocket.on("connect", () => {
+      console.log("Connected to socket:", newSocket.id);
+      // Join the pandit room
+      newSocket.emit("join_pandit_room", { panditId });
+    });
+
+    // Listen for new booking notifications
+    newSocket.on("new_booking_notification", (booking) => {
+      console.log("New booking notification received:", booking);
+      setCurrentBooking(booking);
+      setShowNotificationPopup(true);
+    });
+
+    newSocket.on("disconnect", () => {
+      console.log("Disconnected from socket");
+    });
+
+    setSocket(newSocket);
+
+    return () => {
+      newSocket.disconnect();
+    };
+  }, [token, panditId]);
+
+  // Fetch bookings
   useEffect(() => {
     if (!token) return;
 
@@ -43,9 +87,6 @@ const PanditHomePage = () => {
     const intervalId = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(intervalId);
   }, []);
-
- 
-  
 
   const handleUpdateStatus = async (bookingId, status) => {
     try {
@@ -121,6 +162,26 @@ const PanditHomePage = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 relative">
+      {/* Booking Notification Popup */}
+      {showNotificationPopup && currentBooking && (
+        <BookingNotificationPopup
+          booking={currentBooking}
+          onClose={() => {
+            setShowNotificationPopup(false);
+            // Refresh bookings after accepting/declining
+            if (token) {
+              axios.get(
+                `${API_BASE}/api/bookings/pandit/requests`,
+                { headers: { Authorization: `Bearer ${token}` } }
+              ).then((res) => {
+                setBookings(res.data?.data || []);
+              });
+            }
+          }}
+          token={token}
+        />
+      )}
+
       {/* Chat Icon */}
       <motion.div
         className="fixed bottom-8 right-8 z-50 cursor-pointer"
@@ -247,9 +308,8 @@ const PanditHomePage = () => {
         transition={{ duration: 1 }}
         className="text-center py-16"
       >
-        <h2 className="text-4xl md:text-5xl font-extrabold text-gray-800">
-          Welcome, Pandit Ji! Or Astrologer ji ! 🙏
-        </h2>
+        <h2 className="text-4xl md:text-5xl font-extrabold text-gray-800">Welcome Back, Pandit Ji! 🙏</h2>
+        <p className="text-gray-600 mt-2 text-lg">You have {pendingBookings.length} pending booking requests</p>
         <p className="text-xl text-gray-600 mt-4">
           Manage your bookings, showcase your expertise, and connect with devotees effortlessly.
         </p>

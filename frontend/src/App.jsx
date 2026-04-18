@@ -21,6 +21,7 @@ import AiAstrologyForm from "./pages/aiAstrology";
 import ChatBox from "./pages/ChatPage";
 import PanditBookingGraph from "./components/BookingGraph"
 import UserBookings from "./pages/UserBookings";
+import SorryPage from "./pages/Sorry";
 function App() {
   return (
     <BrowserRouter>
@@ -42,6 +43,7 @@ function App() {
         <Route path='/pandit/forgetpassword' element={<Forgetpasspandit/>}/>
         <Route path='/aboutus' element={<AboutUs/>}/>
         <Route path='/AstroConsult' element={<AstroConsult/>}/>
+        <Route path='/Sorry' element={<SorryPage />}/>
         <Route path="/panditChat/:roomId" element={<ChatBox />} />
         <Route path="/aiAstrology" element={<AiAstrologyForm />} />
        </Routes>

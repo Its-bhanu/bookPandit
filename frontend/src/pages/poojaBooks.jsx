@@ -53,14 +53,36 @@ const PoojaBooks = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true); // Set loading to true when form is submitted
+    setIsLoading(true);
+
+    // Validate phone number
+    const phoneRegex = /^[6-9]\d{9}$/;
+    if (!phoneRegex.test(formData.phoneNo.toString())) {
+      toast.error("Please enter a valid 10-digit phone number starting with 6, 7, 8, or 9");
+      setIsLoading(false);
+      return;
+    }
+
+    // Validate name
+    if (formData.name.trim().length < 2) {
+      toast.error("Please enter a valid name (at least 2 characters)");
+      setIsLoading(false);
+      return;
+    }
+
+    // Validate address
+    if (formData.address.trim().length < 5) {
+      toast.error("Please enter a valid address (at least 5 characters)");
+      setIsLoading(false);
+      return;
+    }
 
     const selectedDate = new Date(formData.date + "T" + formData.time);
     const now = new Date();
 
     if (selectedDate < now) {
       toast.error("Please select a future date and time.");
-      setIsLoading(false); // Reset loading if validation fails
+      setIsLoading(false);
       return;
     }
 
@@ -68,8 +90,6 @@ const PoojaBooks = () => {
       // Simulate API call delay (remove this in production)
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-
-
       navigate('/panditProfile', { state: { formData } });
     } catch (error) {
       console.log("error", error);
@@ -77,7 +97,7 @@ const PoojaBooks = () => {
       toast.error(error.response?.data?.message || "Sorry ");
       setError(error.response.data.message);
     } finally {
-      setIsLoading(false); // Reset loading state in any case
+      setIsLoading(false);
     }
   };
 
@@ -105,12 +125,16 @@ const PoojaBooks = () => {
           <input
             type="tel"
             name="phoneNo"
-            placeholder="Phone Number"
+            placeholder="10-digit phone number"
             value={formData.phoneNo}
             onChange={handleChange}
+            maxLength="10"
+            pattern="[6-9][0-9]{9}"
+            title="Enter a valid 10-digit phone number starting with 6, 7, 8, or 9"
             required
-            className="w-full p-2 mb-4 border rounded-lg"
+            className="w-full p-2 mb-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
+          <p className="text-xs text-gray-500 mb-4">Format: 10 digits starting with 6, 7, 8, or 9</p>
           <label className="block mb-1 text-sm font-medium text-gray-700">
   Select Pooja Type
 </label>
