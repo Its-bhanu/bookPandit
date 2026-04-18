@@ -25,20 +25,18 @@ app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.use(cookieparser())
 
-// Enhanced CORS Configuration with Debugging
+// Enhanced CORS Configuration with Debugging - Vercel Compatible
 const corsOptions = {
   origin: function (origin, callback) {
     const allowedOrigins = [
       "http://localhost:5173",      // Vite dev server
-      "http://localhost:3000",      // Node dev server
-      "http://127.0.0.1:5173",      // Alternative localhost
-      "https://book-pandit.vercel.app",
-      "https://bookpandit-2.onrender.com",
-      "https://bookpandit.vercel.app"
+      "https://book-pandit.vercel.app",       // ✅ Your Frontend
+      "https://bookpandit.vercel.app",  
+      "*"  // Allow all origins (less secure but helps debug Vercel issues)
     ];
 
     // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+    if (!origin || allowedOrigins.includes(origin) || allowedOrigins.includes("*")) {
       console.log("✅ CORS Allowed for origin:", origin);
       callback(null, true);
     } else {
@@ -49,29 +47,37 @@ const corsOptions = {
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  optionsSuccessStatus: 200
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+  exposedHeaders: ['Content-Length', 'Content-Type'],
+  optionsSuccessStatus: 200,
+  maxAge: 86400 // 24 hours
 };
 
 app.use(cors(corsOptions));
 
-// Debug middleware - log all requests
+// Explicit CORS headers for preflight requests
 app.use((req, res, next) => {
+  const origin = req.get('origin');
+  
+  // Set CORS headers explicitly
+  res.header('Access-Control-Allow-Origin', origin || '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  
+  // Debug logging
   console.log(`📍 ${req.method} ${req.path}`);
-  console.log(`🌍 Origin: ${req.get('origin') || 'No origin'}`);
+  console.log(`🌍 Origin: ${origin || 'No origin'}`);
   console.log(`🔐 Authorization: ${req.get('authorization') ? '✅ Present' : '❌ Missing'}`);
+  
+  // Handle preflight
+  if (req.method === 'OPTIONS') {
+    console.log("✈️  Preflight OPTIONS request for:", req.path);
+    return res.sendStatus(200);
+  }
+  
   next();
 });
-
-// Handle preflight requests
-app.options('*', function (req, res) {
-  console.log("✈️  Preflight OPTIONS request received for:", req.path);
-  res.header('Access-Control-Allow-Origin', req.get('origin'));
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  res.sendStatus(200);
-}); 
 
 
 app.use("/api/ai" , predictionRoutes)
