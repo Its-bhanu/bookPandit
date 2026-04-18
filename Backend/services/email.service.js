@@ -76,12 +76,12 @@ const sendBookingNotificationEmail = async (panditEmail, booking, acceptLink, re
                 <div style="background: white; padding: 30px; text-align: center;">
                     <p style="color: #666; font-weight: 600; margin-bottom: 20px;">Respond to this booking:</p>
                     <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-                        <a href="${acceptLink}" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 14px 40px; border-radius: 6px; text-decoration: none; font-weight: 600; display: inline-block; transition: transform 0.2s; cursor: pointer;">
-                            ✅ Accept Booking
-                        </a>
-                        <a href="${rejectLink}" style="background: #e74c3c; color: white; padding: 14px 40px; border-radius: 6px; text-decoration: none; font-weight: 600; display: inline-block; transition: transform 0.2s; cursor: pointer;">
-                            ❌ Decline Booking
-                        </a>
+                        // <a href="${acceptLink}" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 14px 40px; border-radius: 6px; text-decoration: none; font-weight: 600; display: inline-block; transition: transform 0.2s; cursor: pointer;">
+                        //     ✅ Accept Booking
+                        // </a>
+                        // <a href="${rejectLink}" style="background: #e74c3c; color: white; padding: 14px 40px; border-radius: 6px; text-decoration: none; font-weight: 600; display: inline-block; transition: transform 0.2s; cursor: pointer;">
+                        //     ❌ Decline Booking
+                        // </a>
                     </div>
                 </div>
 
@@ -89,7 +89,7 @@ const sendBookingNotificationEmail = async (panditEmail, booking, acceptLink, re
                 <div style="background: #f8f9fa; padding: 20px; text-align: center; border-radius: 0 0 10px 10px; border-top: 1px solid #e0e0e0;">
                     <p style="color: #999; font-size: 12px; margin: 0;">
                         © 2024 BookPandit. All rights reserved.<br>
-                        <a href="https://bookpandit.com" style="color: #667eea; text-decoration: none;">Visit our website</a>
+                        <a href="https://book-pandit.vercel.app/" style="color: #667eea; text-decoration: none;">Visit our website</a>
                     </p>
                 </div>
             </div>

@@ -6,60 +6,81 @@ import { API_BASE } from "../config/api";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [bookingCount, setBookingCount] = useState(0);
+  const [userBookingCount, setUserBookingCount] = useState(0);
+  const [panditBookingCount, setPanditBookingCount] = useState(0);
   const [userToken, setUserToken] = useState(null);
+  const [panditToken, setPanditToken] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem("userlogintoken");
+    const userToken = localStorage.getItem("userlogintoken");
+    const panditToken = localStorage.getItem("panditsignintoken");
     
-    // Only set user token if it exists AND is valid
-    if (token) {
-      validateAndFetchBookings(token);
-    } else {
+    // Check which type of user is logged in
+    if (panditToken) {
+      // Pandit is logged in
+      setPanditToken(panditToken);
       setUserToken(null);
-      setBookingCount(0);
+      validateAndFetchPanditBookings(panditToken);
+    } else if (userToken) {
+      // User is logged in
+      setUserToken(userToken);
+      setPanditToken(null);
+      validateAndFetchUserBookings(userToken);
+    } else {
+      // No one is logged in
+      setUserToken(null);
+      setPanditToken(null);
+      setUserBookingCount(0);
+      setPanditBookingCount(0);
     }
   }, []);
 
-  const validateAndFetchBookings = async (token) => {
+  const validateAndFetchUserBookings = async (token) => {
     try {
-      // Validate token by fetching bookings (this will fail if token is expired/invalid)
       const response = await axios.get(`${API_BASE}/api/bookings/user`, {
         headers: { Authorization: `Bearer ${token}` },
         timeout: 5000
       });
+      setUserBookingCount(response.data?.data?.length || 0);
       
-      // Token is valid - set it and update booking count
-      setUserToken(token);
-      setBookingCount(response.data?.data?.length || 0);
-      
-      // Refresh booking count every 30 seconds
-      const interval = setInterval(() => fetchBookingCount(token), 30000);
+      // Refresh every 30 seconds
+      const interval = setInterval(() => {
+        axios.get(`${API_BASE}/api/bookings/user`, {
+          headers: { Authorization: `Bearer ${token}` },
+          timeout: 5000
+        }).then(res => setUserBookingCount(res.data?.data?.length || 0));
+      }, 30000);
       return () => clearInterval(interval);
     } catch (error) {
-      // Token is invalid or expired - clear it
-      console.log("Token validation failed, clearing authentication");
+      console.log("User token validation failed");
       localStorage.removeItem("userlogintoken");
       localStorage.removeItem("userId");
       setUserToken(null);
-      setBookingCount(0);
     }
   };
 
-  const fetchBookingCount = async (token) => {
+  const validateAndFetchPanditBookings = async (token) => {
     try {
-      const response = await axios.get(`${API_BASE}/api/bookings/user`, {
-        headers: { Authorization: `Bearer ${token}` }
+      const response = await axios.get(`${API_BASE}/api/bookings/pandit/requests`, {
+        headers: { Authorization: `Bearer ${token}` },
+        timeout: 5000
       });
-      setBookingCount(response.data?.data?.length || 0);
+      setPanditBookingCount(response.data?.data?.length || 0);
+      
+      // Refresh every 30 seconds
+      const interval = setInterval(() => {
+        axios.get(`${API_BASE}/api/bookings/pandit/requests`, {
+          headers: { Authorization: `Bearer ${token}` },
+          timeout: 5000
+        }).then(res => setPanditBookingCount(res.data?.data?.length || 0));
+      }, 30000);
+      return () => clearInterval(interval);
     } catch (error) {
-      // If fetch fails, clear the invalid token
-      console.error("Error fetching booking count - clearing token:", error);
-      localStorage.removeItem("userlogintoken");
-      localStorage.removeItem("userId");
-      setUserToken(null);
-      setBookingCount(0);
+      console.log("Pandit token validation failed");
+      localStorage.removeItem("panditsignintoken");
+      localStorage.removeItem("panditId");
+      setPanditToken(null);
     }
   };
 
@@ -70,8 +91,12 @@ const Header = () => {
   const handleLogout = () => {
     localStorage.removeItem("userlogintoken");
     localStorage.removeItem("userId");
+    localStorage.removeItem("panditsignintoken");
+    localStorage.removeItem("panditId");
     setUserToken(null);
-    setBookingCount(0);
+    setPanditToken(null);
+    setUserBookingCount(0);
+    setPanditBookingCount(0);
     navigate("/");
   };
 
@@ -100,7 +125,31 @@ const Header = () => {
           <li className="py-2 md:py-0"><Link to="/aboutus" className="block hover:text-blue-600">About Us</Link></li>
           <li className="py-2 md:py-0"><Link to="/contactUs" className="block hover:text-blue-600">Contact Us</Link></li>
           
-          {userToken ? (
+          {panditToken ? (
+            <>
+              <li className="py-2 md:py-0">
+                <Link 
+                  to="/PanditHome" 
+                  className="block hover:text-blue-600 font-semibold relative"
+                >
+                  My Requests
+                  {panditBookingCount > 0 && (
+                    <span className="ml-2 bg-orange-500 text-white text-xs rounded-full px-2 py-1">
+                      {panditBookingCount}
+                    </span>
+                  )}
+                </Link>
+              </li>
+              <li className="py-2 md:py-0">
+                <button 
+                  onClick={handleLogout}
+                  className="block hover:text-red-600 font-semibold"
+                >
+                  Logout
+                </button>
+              </li>
+            </>
+          ) : userToken ? (
             <>
               <li className="py-2 md:py-0">
                 <Link 
@@ -108,9 +157,9 @@ const Header = () => {
                   className="block hover:text-blue-600 font-semibold relative"
                 >
                   My Bookings
-                  {bookingCount > 0 && (
-                    <span className="ml-2 bg-red-500 text-white text-xs rounded-full px-2 py-1 absolute -top-3 -right-2">
-                      {bookingCount}
+                  {userBookingCount > 0 && (
+                    <span className="ml-2 bg-red-500 text-white text-xs rounded-full px-2 py-1">
+                      {userBookingCount}
                     </span>
                   )}
                 </Link>

@@ -23,6 +23,7 @@ router.post('/login',[
 ],panditController.loginPandit);
 
 router.get('/profile', authMiddleware.authpandit, panditController.getPanditProfile);
+router.get('/:id', panditController.getPanditById);
 router.get('/logout', authMiddleware.authpandit, panditController.logoutPandit);
 router.get('/AllProfiles',panditController.getAllPandits);
 router.get("/user/token", authMiddleware.authpandit, panditController.getBookingByUser)

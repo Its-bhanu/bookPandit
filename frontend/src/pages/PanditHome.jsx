@@ -4,70 +4,47 @@ import { motion } from "framer-motion";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import axios from "axios";
-import { io } from "socket.io-client";
 import "swiper/css/pagination";
 import { Pagination, Autoplay } from "swiper/modules";
 import { FaBars, FaTimes, FaCommentDots, FaPaperPlane, FaTimesCircle } from "react-icons/fa";
-import { API_BASE, SOCKET_BASE } from "../config/api";
-import BookingNotificationPopup from "../components/BookingNotificationPopup";
+import { API_BASE } from "../config/api";
 
 const PanditHomePage = () => {
   const [bookings, setBookings] = useState([]);
+  const [panditDetails, setPanditDetails] = useState(null);
+  const [loadingDetails, setLoadingDetails] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([
     { text: "Here Pandit Can chat with users in real time", sender: "bot" },
   ]);
-  const [socket, setSocket] = useState(null);
-  const [showNotificationPopup, setShowNotificationPopup] = useState(false);
-  const [currentBooking, setCurrentBooking] = useState(null);
-  
   const token = localStorage.getItem("panditsignintoken");
   const panditId = localStorage.getItem("panditId");
   const [now, setNow] = useState(Date.now());
   const navigate = useNavigate();
 
-  // Initialize Socket Connection
   useEffect(() => {
     if (!token || !panditId) return;
 
-    const newSocket = io(SOCKET_BASE, {
-      transports: ["websocket"],
-      reconnection: true,
-      reconnectionDelay: 1000,
-      reconnectionDelayMax: 5000,
-      reconnectionAttempts: 5,
-    });
-
-    newSocket.on("connect", () => {
-      console.log("Connected to socket:", newSocket.id);
-      // Join the pandit room
-      newSocket.emit("join_pandit_room", { panditId });
-    });
-
-    // Listen for new booking notifications
-    newSocket.on("new_booking_notification", (booking) => {
-      console.log("New booking notification received:", booking);
-      setCurrentBooking(booking);
-      setShowNotificationPopup(true);
-    });
-
-    newSocket.on("disconnect", () => {
-      console.log("Disconnected from socket");
-    });
-
-    setSocket(newSocket);
-
-    return () => {
-      newSocket.disconnect();
+    // Fetch Pandit Details
+    const fetchPanditDetails = async () => {
+      try {
+        console.log("🔍 Fetching pandit details for ID:", panditId);
+        const response = await axios.get(
+          `${API_BASE}/api/pandits/${panditId}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        setPanditDetails(response.data?.data || response.data);
+        console.log("✅ Pandit details:", response.data?.data || response.data);
+      } catch (error) {
+        console.error("❌ Error fetching pandit details:", error);
+      } finally {
+        setLoadingDetails(false);
+      }
     };
-  }, [token, panditId]);
 
-  // Fetch bookings
-  useEffect(() => {
-    if (!token) return;
-
+    // Fetch Bookings
     const fetchBookings = async () => {
       try {
         const response = await axios.get(
@@ -80,13 +57,17 @@ const PanditHomePage = () => {
       }
     };
 
+    fetchPanditDetails();
     fetchBookings();
-  }, [token]);
+  }, [token, panditId]);
 
   useEffect(() => {
     const intervalId = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(intervalId);
   }, []);
+
+ 
+  
 
   const handleUpdateStatus = async (bookingId, status) => {
     try {
@@ -162,26 +143,6 @@ const PanditHomePage = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 relative">
-      {/* Booking Notification Popup */}
-      {showNotificationPopup && currentBooking && (
-        <BookingNotificationPopup
-          booking={currentBooking}
-          onClose={() => {
-            setShowNotificationPopup(false);
-            // Refresh bookings after accepting/declining
-            if (token) {
-              axios.get(
-                `${API_BASE}/api/bookings/pandit/requests`,
-                { headers: { Authorization: `Bearer ${token}` } }
-              ).then((res) => {
-                setBookings(res.data?.data || []);
-              });
-            }
-          }}
-          token={token}
-        />
-      )}
-
       {/* Chat Icon */}
       <motion.div
         className="fixed bottom-8 right-8 z-50 cursor-pointer"
@@ -301,19 +262,81 @@ const PanditHomePage = () => {
         )}
       </header>
 
-      {/* Welcome */}
-      <motion.section
-        initial={{ opacity: 0, y: -50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1 }}
-        className="text-center py-16"
-      >
-        <h2 className="text-4xl md:text-5xl font-extrabold text-gray-800">Welcome Back, Pandit Ji! 🙏</h2>
-        <p className="text-gray-600 mt-2 text-lg">You have {pendingBookings.length} pending booking requests</p>
-        <p className="text-xl text-gray-600 mt-4">
-          Manage your bookings, showcase your expertise, and connect with devotees effortlessly.
-        </p>
-      </motion.section>
+      {/* Welcome Section with Pandit Details */}
+      {panditDetails && !loadingDetails && (
+        <motion.section
+          initial={{ opacity: 0, y: -50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1 }}
+          className="text-center py-16 px-4"
+        >
+          <h2 className="text-4xl md:text-5xl font-extrabold text-gray-800 mb-2">
+            Welcome, {panditDetails.fullname}! 🙏
+          </h2>
+          <p className="text-xl text-purple-600 font-semibold mb-8">
+            ✨ Experienced Pandit & Astrologer
+          </p>
+
+          {/* Additional Details Grid */}
+          <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            {/* Experience */}
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              className="bg-white rounded-xl p-6 shadow-lg border-l-4 border-blue-500"
+            >
+              <p className="text-4xl font-bold text-blue-600 mb-2">{panditDetails.experience || 0}</p>
+              <p className="text-gray-700 font-semibold">Years of Experience</p>
+              <p className="text-gray-500 text-sm mt-2">Dedicated to spiritual services</p>
+            </motion.div>
+
+            {/* Age */}
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              className="bg-white rounded-xl p-6 shadow-lg border-l-4 border-purple-500"
+            >
+              <p className="text-4xl font-bold text-purple-600 mb-2">{panditDetails.age || 0}</p>
+              <p className="text-gray-700 font-semibold">Years Old</p>
+              <p className="text-gray-500 text-sm mt-2">Wisdom & knowledge</p>
+            </motion.div>
+
+            {/* Total Clients */}
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              className="bg-white rounded-xl p-6 shadow-lg border-l-4 border-green-500"
+            >
+              <p className="text-4xl font-bold text-green-600 mb-2">{bookings.length}</p>
+              <p className="text-gray-700 font-semibold">Total Bookings</p>
+              <p className="text-gray-500 text-sm mt-2">Trusted by devotees</p>
+            </motion.div>
+          </div>
+
+          {/* Location & Expertise */}
+          <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Location */}
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl p-6 shadow-md"
+            >
+              <p className="text-gray-600 text-sm font-bold uppercase mb-2">📍 Location</p>
+              <p className="text-gray-800 font-semibold text-lg">{panditDetails.address || "N/A"}</p>
+            </motion.div>
+
+            {/* Contact */}
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 shadow-md"
+            >
+              <p className="text-gray-600 text-sm font-bold uppercase mb-2">📞 Contact</p>
+              <p className="text-gray-800 font-semibold text-lg">{panditDetails.mobile || "N/A"}</p>
+              <p className="text-gray-600 text-sm mt-1">{panditDetails.email || "N/A"}</p>
+            </motion.div>
+          </div>
+
+          <p className="text-lg text-gray-600 mt-12 max-w-3xl mx-auto">
+            Manage your bookings, showcase your expertise, and connect with devotees effortlessly. Your dedication to spiritual services is highly appreciated.
+          </p>
+        </motion.section>
+      )}
 
       {/* Booking Requests */}
       <section className="py-12 px-4 md:px-8">

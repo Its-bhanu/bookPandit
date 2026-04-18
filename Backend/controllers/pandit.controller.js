@@ -43,23 +43,26 @@ const generateOTPEmailTemplate = (otp, logoUrl) => {
 const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
 
 module.exports.registerPandit = async (req, res) => {
-    console.log(req.body);
+    console.log("🔍 [Pandit Register] Registration request received");
+    console.log("📝 Request body:", req.body);
 
     // Validate Request Body
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        console.log("Validation errors found:", errors.array());
+        console.log("❌ [Pandit Register] Validation errors found:", errors.array());
         return res.status(400).json({ errors: errors.array() });
     }
 
-    const { fullname, email, experience, age, password, mobile, address,expertise } = req.body;
-    if (!fullname || !email || !experience || !age || !password || !mobile || !address ||!expertise) {
+    const { fullname, email, experience, age, password, mobile, address, expertise } = req.body;
+    if (!fullname || !email || !experience || !age || !password || !mobile || !address || !expertise) {
+        console.log("❌ [Pandit Register] Missing required fields");
         return res.status(400).json({ message: 'All fields are required' });
     }
 
-    console.log("Checking if email is already registered...");
+    console.log("🔍 [Pandit Register] Checking if email is already registered...");
     const isAlreadyRegistered = await panditModel.findOne({ email });
     if (isAlreadyRegistered) {
+        console.log("❌ [Pandit Register] Email already registered:", email);
         return res.status(400).json({ message: 'Email is already registered' });
     }
 
@@ -67,6 +70,9 @@ module.exports.registerPandit = async (req, res) => {
     const otp = generateOTP();
     const otpExpires = Date.now() + 10 * 60 * 1000; // OTP expires in 10 minutes
     const logoUrl="https://cdni.iconscout.com/illustration/premium/thumb/male-pandit-showing-mobile-2775575-2319298.png";
+    
+    console.log("📧 [Pandit Register] Generated OTP:", otp, "for email:", email);
+    
     try {
         // Send OTP via Email
         await transporter.sendMail({
@@ -75,9 +81,9 @@ module.exports.registerPandit = async (req, res) => {
             subject: "Your OTP Code for Pandit Signup",
             html: generateOTPEmailTemplate(otp, logoUrl), 
         });
-        console.log("✅ OTP sent successfully to", email);
+        console.log("✅ [Pandit Register] OTP sent successfully to", email);
     } catch (error) {
-        console.error("❌ Error sending OTP email:", error);
+        console.error("❌ [Pandit Register] Error sending OTP email:", error.message);
         return res.status(500).json({ message: "Failed to send OTP" });
     }
 
@@ -100,16 +106,31 @@ module.exports.registerPandit = async (req, res) => {
             isVerified: false,
         });
 
+        console.log("✅ [Pandit Register] Pandit record created successfully");
+        console.log("✅ [Pandit Register] Pandit ID:", pandit._id);
+        console.log("✅ [Pandit Register] Pandit name:", pandit.fullname);
+
         // Generate Token
         const token = pandit.generateAuthToken();
 
         // Send Response
-        res.status(201).json({ message: "OTP sent successfully. Please verify OTP.", token, pandit });
+        res.status(201).json({ 
+            message: "OTP sent successfully. Please verify OTP.", 
+            token, 
+            pandit: {
+                _id: pandit._id,
+                fullname: pandit.fullname,
+                email: pandit.email,
+                mobile: pandit.mobile,
+                experience: pandit.experience,
+                age: pandit.age,
+                address: pandit.address
+            }
+        });
 
-        console.log("✅ Pandit registered:", pandit);
     } catch (error) {
-        console.error("❌ Error registering pandit:", error);
-        console.log(res.body);
+        console.error("❌ [Pandit Register] Error registering pandit:", error.message);
+        console.error("❌ [Pandit Register] Full error:", error);
         res.status(500).json({ message: "Internal Server Error" });
     }
 };
@@ -142,38 +163,104 @@ module.exports.verifyPanditOtp = async (req, res) => {
 
 // ✅ Login Pandit
 module.exports.loginPandit = async (req, res) => {
+    console.log("🔍 [Pandit Login] Request received");
+    console.log("📧 Email:", req.body.email);
+    
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+        console.log("❌ [Pandit Login] Validation errors:", errors.array());
         return res.status(400).json({ errors: errors.array() });
     }
     
     const { email, password } = req.body;
     if (!email || !password) {
+        console.log("❌ [Pandit Login] Missing email or password");
         return res.status(400).json({ message: 'All fields are required' });
     }
 
-    const pandit = await panditModel.findOne({ email }).select('+password');
-    if (!pandit) {
-        return res.status(400).json({ message: 'Invalid credentials' });
+    try {
+        console.log("🔍 [Pandit Login] Finding pandit by email:", email);
+        const pandit = await panditModel.findOne({ email }).select('+password');
+        
+        if (!pandit) {
+            console.log("❌ [Pandit Login] Pandit not found with email:", email);
+            return res.status(400).json({ message: 'Invalid credentials' });
+        }
+
+        console.log("✅ [Pandit Login] Pandit found:", pandit.fullname);
+        console.log("✅ [Pandit Login] Pandit ID:", pandit._id);
+        console.log("✅ [Pandit Login] Is Verified:", pandit.isVerified);
+
+        if (!pandit.isVerified) {
+            console.log("❌ [Pandit Login] Pandit not verified - OTP pending for:", email);
+            return res.status(403).json({ message: "OTP verification pending. Please verify OTP first." });
+        }
+
+        const isMatch = await pandit.comparePassword(password);
+        if (!isMatch) {
+            console.log("❌ [Pandit Login] Password mismatch for pandit:", email);
+            return res.status(400).json({ message: 'Invalid credentials' });
+        }
+
+        console.log("✅ [Pandit Login] Password matched - Generating token");
+        const token = pandit.generateAuthToken();
+        console.log("✅ [Pandit Login] Token generated successfully");
+
+        console.log("✅ [Pandit Login] Login successful for pandit:", pandit.fullname);
+        res.status(200).json({ 
+            message: "Login successful", 
+            token, 
+            pandit: {
+                _id: pandit._id,
+                fullname: pandit.fullname,
+                email: pandit.email,
+                mobile: pandit.mobile,
+                experience: pandit.experience,
+                age: pandit.age,
+                address: pandit.address
+            }
+        });
+    } catch (error) {
+        console.error("❌ [Pandit Login] Error during login:", error.message);
+        console.error("❌ [Pandit Login] Full error:", error);
+        res.status(500).json({ message: 'Internal Server Error', error: error.message });
     }
-
-    if (!pandit.isVerified) {
-        return res.status(403).json({ message: "OTP verification pending. Please verify OTP first." });
-    }
-
-    const isMatch = await pandit.comparePassword(password);
-    if (!isMatch) {
-        return res.status(400).json({ message: 'Invalid credentials' });
-    }
-
-    const token = pandit.generateAuthToken();
-
-    res.status(200).json({ message: "Login successful", token, pandit });
 };
 
 // ✅ Get Pandit Profile
 module.exports.getPanditProfile = async (req, res) => {
     res.status(200).json(req.pandit);
+};
+
+// ✅ Get Pandit by ID
+module.exports.getPanditById = async (req, res) => {
+    try {
+        console.log("🔍 [Get Pandit] Fetching pandit with ID:", req.params.id);
+        
+        const pandit = await panditModel.findById(req.params.id);
+        if (!pandit) {
+            console.log("❌ [Get Pandit] Pandit not found with ID:", req.params.id);
+            return res.status(404).json({ message: 'Pandit not found' });
+        }
+
+        console.log("✅ [Get Pandit] Pandit found:", pandit.fullname);
+        res.status(200).json({ 
+            data: {
+                _id: pandit._id,
+                fullname: pandit.fullname,
+                email: pandit.email,
+                mobile: pandit.mobile,
+                experience: pandit.experience,
+                age: pandit.age,
+                address: pandit.address,
+                expertise: pandit.expertise,
+                isVerified: pandit.isVerified
+            }
+        });
+    } catch (error) {
+        console.error("❌ [Get Pandit] Error fetching pandit:", error.message);
+        res.status(500).json({ message: 'Error fetching pandit', error: error.message });
+    }
 };
 
 // ✅ Logout Pandit

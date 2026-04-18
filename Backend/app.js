@@ -24,20 +24,10 @@ const statsRoutes = require('./routes/poojaBooks.routes')
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.use(cookieparser())
-
-const corsOptions = {
-    origin: [
-        'http://localhost:5173',
-        'http://localhost:3000',
-        'https://book-pandit.vercel.app',
-    ],
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    credentials: true,
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    optionsSuccessStatus: 200
-};
-
-app.use(cors(corsOptions)); 
+app.use(cors({
+    origin: '*'
+}));
+app.use(cors()); 
 
 
 app.use("/api/ai" , predictionRoutes)

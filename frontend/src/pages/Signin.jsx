@@ -22,20 +22,31 @@ const Signin = () => {
     setError("");
     setLoading(true); // Start loading
 
+    console.log("🔍 [Pandit Login] Attempting login with email:", formData.email);
+
     try {
       const response = await axios.post(
         `${API_BASE}/api/pandits/login`,
         formData
       );
+      
+      console.log("✅ [Pandit Login] Login response received:", response.data);
+      
       localStorage.setItem("panditsignintoken", response.data.token);
-      if (response.data.pandit && response.data.pandit._id) {
-        localStorage.setItem("panditId", response.data.pandit._id);
-      }
+      localStorage.setItem("panditId", response.data.pandit._id);
+      
+      console.log("✅ [Pandit Login] Token stored:", response.data.token);
+      console.log("✅ [Pandit Login] Pandit ID stored:", response.data.pandit._id);
+      
       toast.success("Sign-in successful!");
       navigate("/panditHome");
     } catch (error) {
-      setError(error.response?.data?.message || "Sign-in failed. Please try again.");
-      toast.error(error.response?.data?.message || "Sign-in failed. Please try again.");
+      console.error("❌ [Pandit Login] Login failed:", error.response?.data || error.message);
+      console.error("❌ [Pandit Login] Full error:", error);
+      
+      const errorMessage = error.response?.data?.message || "Sign-in failed. Please try again.";
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setLoading(false); // Stop loading
     }
