@@ -30,7 +30,6 @@ const corsOptions = {
         'http://localhost:5173',
         'http://localhost:3000',
         'https://book-pandit.vercel.app',
-        'https://bookpandit-2.onrender.com'
     ],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     credentials: true,
